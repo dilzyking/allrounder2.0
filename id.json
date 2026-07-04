@@ -1,0 +1,447 @@
+{
+  "iframes": [
+    {
+      "id": "hindi",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder2-0.pages.dev/cricket/hindi",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "ios-3",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/ios-3",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "hindi2",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.in/hindi2",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "6ter",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/6ter",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "fussball",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/fussball",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "w9",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/w9",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "gulli",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/guli",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "m6plus",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/m6",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+   {
+      "id": "zee-hindi",
+      "name": "Zee Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/hindi.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "fifa",
+      "name": "FIFA",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/fifa1",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+       {
+      "id": "zee-eng",
+      "name": "zee-eng",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.sayanwork-studioo.workers.dev/eng",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "ios-2",
+      "name": "ios",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/ios.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+
+   {
+      "id": "tsn",
+      "name": "Tsn",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/tsn",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+
+   {
+      "id": "dsports",
+      "name": "D Sports",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/dsports",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+   {
+      "id": "fox-sports",
+      "name": "Fox",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/fox-sports",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+   {
+      "id": "telemundo",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/telemundo",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+   {
+      "id": "caze-tv",
+      "name": "caze Tv",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/caze-tv",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+   {
+      "id": "benin",
+      "name": "benin",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/benin",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+   {
+      "id": "sportv",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/sportv",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "kayo",
+      "name": "cricbuzz",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/channel/kayo",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    
+    {
+      "id": "kayo2",
+      "name": "cricbuzz",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/channel/kayo-2",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "ptv",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live2.pages.dev/channel/ptv",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "myco",
+      "name": "Myco",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-rho.vercel.app/channel/myco.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=prime-hin",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=prime-hin"
+    },
+    {
+      "id": "prime-hin",
+      "name": "Prime Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live.pages.dev/channel/prame-hin.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=prime-hin",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=prime-hin"
+    },
+    {
+      "id": "wpl",
+      "name": "hotstar",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/cric-life",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "hub",
+      "name": "hub",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live.pages.dev/channel/hub5",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "tnt",
+      "name": "TNT Sports",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/channel/tnt-2",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=tnt",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=tnt"
+    },
+    {
+      "id": "fancode",
+      "name": "Fancode",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/hls",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=tnt",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=tnt"
+    },
+    {
+      "id": "asiacup",
+      "name": "Asia Cup",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/player?url=https://d3ssd0juqbxbw.cloudfront.net/mtvsinstlive/master.m3u8",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=asiacup",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=asiacup"
+    },
+    {
+      "id": "willow",
+      "name": "Willow",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder2.dillzycreations.workers.dev/cricket/willow",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=willow",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=willow"
+    },
+    {
+      "id": "willow-2",
+      "name": "Willow",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/willow2",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=willow",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=willow"
+    },
+    {
+      "id": "prame-hin",
+      "name": "Prime Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live.pages.dev/channel/prame-hin.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=prime-hin",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=prime-hin"
+    },
+    {
+      "id": "alt",
+      "name": "DILLZY",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/player?url=https://dillzy.cricketstream745.workers.dev/live.m3u8",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=alt",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=alt"
+    },
+    {
+      "id": "prime-eng",
+      "name": "Prime English",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.in/prime.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=prime-eng",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=prime-eng"
+    },
+    {
+      "id": "sky-sports-nz",
+      "name": "Sky Nz",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/channel/hub5",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=sky-sports-nz",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=sky-sports-nz"
+    },
+    {
+      "id": "willow-sports",
+      "name": "Willow",
+      "type": "iframe",
+      "iframeSrc": "https://cricketstan.github.io/Willow-Sports/",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=willow-sports",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=willow-sports"
+    },
+    {
+      "id": "hotstar",
+      "name": "Hotstar",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/dilz?id=dillzy645",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=icc-tv",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=icc-tv"
+    },
+    {
+      "id": "fox",
+      "name": "Fox Cricket 501",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/channel/fox1",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=fox",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=fox"
+    },
+    {
+      "id": "channel-7",
+      "name": "7 plus Cricket",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/player?url=https://hugh.cdn.rumble.cloud/live/gi29le7p/slot-139/bx1o-9vac_720p/chunklist.m3u8",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=channel-7",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=channel-7"
+    },
+    {
+      "id": "ios",
+      "name": "Appel Wale",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live12.pages.dev/hotstar",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=ios",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=ios"
+    },
+    {
+      "id": "eng",
+      "name": "Star Sports Select",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder2.dillzycreations.workers.dev/cricket/willow",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=eng",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=eng"
+    },
+    {
+      "id": "fox-hd",
+      "name": "Fox Cricket",
+      "type": "iframe",
+      "iframeSrc": "https://cricketstan.github.io/Fox-Cricket-/",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=fox-hd",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=fox-hd"
+    },
+    {
+      "id": "zee",
+      "name": "Zee Cenena",
+      "type": "iframe",
+      "iframeSrc": "https://zee-seven.vercel.app/",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=astro",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=astro"
+    },
+    {
+      "id": "jio-hotstar",
+      "name": "Jio Hotstar",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live7.pages.dev/channel/hotstar",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=jio-hotstar",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=jio-hotstar"
+    },
+    {
+      "id": "sky-uk",
+      "name": "SKY",
+      "type": "iframe",
+      "iframeSrc": "https://allroundersd.pages.dev/channel/sky-uk",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=sky",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=sky"
+    },
+    {
+      "id": "sky-nz-1",
+      "name": "SKY NZ",
+      "type": "iframe",
+      "iframeSrc": "https://crickettv.site/sky-nz/player?id=3",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=sky-nz-1",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=sky-nz-1"
+    },
+    {
+      "id": "tnt-1",
+      "name": "TNT Sports 1",
+      "type": "iframe",
+      "iframeSrc": "https://cricketstan.github.io/TNT-1/",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=tnt-1",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=tnt-1"
+    },
+    {
+      "id": "prime-nz",
+      "name": "PRIME",
+      "type": "iframe",
+      "iframeSrc": "https://hff-cricketstan.wasmer.app/",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=prime-nz",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=prime-nz"
+    },
+    {
+      "id": "sony",
+      "name": "SONY",
+      "type": "iframe",
+      "iframeSrc": "https://allrounderlive.pages.dev/sonyliv/sonyliv-1",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=sony-1",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=sony-1"
+    },
+    {
+      "id": "sony-3",
+      "name": "SONY",
+      "type": "iframe",
+      "iframeSrc": "https://cricketstan.github.io/Sony-ten-5/",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=sony-3",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=sony-3"
+    },
+    {
+      "id": "youtube",
+      "name": "Youtube",
+      "type": "iframe",
+      "iframeSrc": "https://www.youtube.com/embed/wnlfD625Eqo?autoplay=1",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=youtube",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=youtube"
+    },
+    {
+      "id": "cricbuzz",
+      "name": "cricbuzz",
+      "type": "iframe",
+      "iframeSrc": "https://allroundersd.pages.dev/cricbuzz1.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=SS",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=SS"
+    },
+    {
+      "id": "telugu",
+      "name": "Star",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live4.pages.dev/star/telugu",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=SS",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=SS"
+    },
+    {
+      "id": "fncode",
+      "name": "fancode",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live4.pages.dev/fancode-player?url=https://in-mc-flive.fancode.com/mumbai/141407_english_hls_ab5ff6c24a21542_1ta-di_h264/1080p.m3u8?hdntl=Expires=1773474245~_GO=Generated~acl=/mumbai/141407_english_hls_ab5ff6c24a21542_1ta-di_h264/*~Signature=AR77L-Yyr9Cdj5X_0so3HpmxTUDWXrASgqUxhTGBOrJaU6SPgB5oUrj5FOVZ7FqeaDZnyCZIHYhGDYKbrr-wcsI214oJ",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=SS",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=SS"
+    },
+    {
+      "id": "tamil",
+      "name": "tamil",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder-live4.pages.dev/star/tamil-1",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=SS",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=SS"
+    }
+  ]
+}
