@@ -100,6 +100,7 @@
       transition: color 0.3s ease;
       letter-spacing: 0.02em;
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     .header-nav a:hover {
@@ -119,6 +120,7 @@
       font-weight: 700;
       font-size: clamp(0.55rem, 1vw, 0.8rem);
       transition: all 0.3s ease;
+      text-shadow: none;
     }
 
     .header-nav .subscribe:hover {
@@ -146,6 +148,7 @@
       background: #ffffff;
       border-radius: 2px;
       transition: all 0.3s ease;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     .hamburger.active span:nth-child(1) {
@@ -190,6 +193,7 @@
       transition: color 0.3s ease;
       letter-spacing: 0.05em;
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
     }
 
     .mobile-menu a:hover {
@@ -204,6 +208,7 @@
       font-weight: 700;
       font-size: clamp(1rem, 3vw, 1.4rem);
       margin-top: clamp(0.5rem, 1vh, 1rem);
+      text-shadow: none;
     }
 
     .mobile-menu .subscribe-mobile:hover {
@@ -303,7 +308,7 @@
       pointer-events: none;
     }
 
-    /* Match Title - BIGGER */
+    /* Match Title - WITH SHADOW */
     .match-title {
       font-size: clamp(0.7rem, 1.2vw, 1rem);
       color: rgba(255, 255, 255, 0.5);
@@ -312,6 +317,7 @@
       margin-bottom: clamp(0.25rem, 0.5vw, 0.6rem);
       font-weight: 600;
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.3);
     }
 
     /* ---------- TEAMS ROW - FLAG ABOVE NAME, SCORE CENTERED ---------- */
@@ -330,7 +336,6 @@
       gap: clamp(0.15rem, 0.3vw, 0.4rem);
     }
 
-    /* BIGGER FLAGS */
     .team-flag {
       width: clamp(55px, 7vw, 100px);
       height: clamp(38px, 4.8vw, 65px);
@@ -339,9 +344,10 @@
       border: 1px solid rgba(255, 255, 255, 0.12);
       flex-shrink: 0;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
-    /* Team name - BIGGER */
+    /* Team name - WITH SHADOW */
     .team-name {
       font-size: clamp(0.7rem, 1.2vw, 1rem);
       font-weight: 600;
@@ -349,9 +355,10 @@
       letter-spacing: 0.05em;
       text-align: center;
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 0, 0, 0.4);
     }
 
-    /* Score - BIG, WHITE, CENTERED BETWEEN FLAGS */
+    /* Score - WITH SHADOW */
     .vs-score {
       font-size: clamp(2rem, 4vw, 3.5rem);
       font-weight: 800;
@@ -361,9 +368,10 @@
       font-family: 'Inter', system-ui, sans-serif;
       line-height: 1;
       margin-top: clamp(0.3rem, 0.6vw, 1rem);
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.5);
     }
 
-    /* Match Info - BIGGER */
+    /* Match Info - WITH SHADOW */
     .match-info {
       display: flex;
       flex-wrap: wrap;
@@ -379,6 +387,7 @@
       letter-spacing: 0.08em;
       font-weight: 600;
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
 
     .match-info .date,
@@ -388,13 +397,14 @@
       color: rgba(255, 255, 255, 0.7);
       font-weight: 400;
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
 
     .match-info .separator {
       color: rgba(255, 255, 255, 0.2);
     }
 
-    /* Badges - BIGGER */
+    /* Badges - WITH SHADOW */
     .badges {
       display: flex;
       flex-wrap: wrap;
@@ -411,6 +421,7 @@
       letter-spacing: 0.06em;
       border: 1px solid rgba(255, 255, 255, 0.08);
       font-family: 'Inter', system-ui, sans-serif;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
     .badge-fulltime {
@@ -472,6 +483,7 @@
       position: relative;
       overflow: hidden;
       border-left: clamp(2px, 0.25vw, 4px) solid #0b0d0f;
+      text-shadow: none;
     }
 
     .watch-btn::before {
@@ -512,7 +524,7 @@
       line-height: 1;
     }
 
-    /* + My TOD Button - BIGGER */
+    /* + My TOD Button - WITH SHADOW */
     .btn-mytod {
       display: inline-flex;
       align-items: center;
@@ -530,6 +542,7 @@
       transition: all 0.3s ease;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
     }
 
     .btn-mytod:hover {
@@ -682,7 +695,6 @@
         position: fixed;
       }
 
-      /* BIGGER LOGO ON VERTICAL */
       .logo {
         font-size: clamp(1.2rem, 4.5vw, 1.8rem);
         position: absolute;
@@ -723,7 +735,6 @@
         width: 100%;
       }
 
-      /* REMOVE LEFT GRADIENT ON VERTICAL */
       .gradient-left {
         display: none;
       }
@@ -738,9 +749,9 @@
         max-width: clamp(300px, 80vw, 450px);
       }
 
-      /* BIGGER TEXT ON MOBILE */
       .match-title {
         font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 0, 0, 0.4);
       }
 
       .team-flag {
@@ -750,27 +761,32 @@
 
       .team-name {
         font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.5);
       }
 
       .vs-score {
         font-size: clamp(1.8rem, 4.5vw, 2.5rem);
         margin-top: clamp(0.25rem, 0.6vw, 0.6rem);
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.6);
       }
 
       .match-info .tag {
         font-size: clamp(0.55rem, 1vw, 0.75rem);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
       }
 
       .match-info .date,
       .match-info .time,
       .match-info .venue {
         font-size: clamp(0.55rem, 1vw, 0.75rem);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
       }
 
       .badge {
         font-size: clamp(0.45rem, 0.8vw, 0.6rem);
         padding: clamp(0.15rem, 0.4vw, 0.3rem) clamp(0.4rem, 0.8vw, 0.7rem);
         border-radius: clamp(10px, 1.8vw, 14px);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
       }
 
       .watch-btn {
@@ -791,6 +807,7 @@
         padding: clamp(0.5rem, 1.2vw, 0.7rem) clamp(0.8rem, 1.5vw, 1.2rem);
         font-size: clamp(0.7rem, 1.5vw, 0.9rem);
         width: auto;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
       }
     }
 
@@ -800,7 +817,6 @@
         padding: 0.2rem 0.6rem;
       }
 
-      /* EVEN BIGGER LOGO ON SMALL VERTICAL */
       .logo {
         font-size: clamp(1rem, 4vw, 1.5rem);
       }
@@ -825,7 +841,6 @@
         min-height: 100dvh;
       }
 
-      /* REMOVE LEFT GRADIENT ON VERTICAL */
       .gradient-left {
         display: none;
       }
@@ -899,7 +914,6 @@
         position: fixed;
       }
 
-      /* BIGGER LOGO ON TABLET VERTICAL */
       .logo {
         position: absolute;
         left: 50%;
@@ -938,7 +952,6 @@
         object-fit: cover;
       }
 
-      /* REMOVE LEFT GRADIENT ON VERTICAL */
       .gradient-left {
         display: none;
       }
@@ -1008,7 +1021,6 @@
         width: 100%;
       }
 
-      /* SHOW LEFT GRADIENT ON LANDSCAPE */
       .gradient-left {
         display: block;
         width: clamp(28%, 40%, 52%);
@@ -1079,7 +1091,6 @@
         width: 100%;
       }
 
-      /* SHOW LEFT GRADIENT ON DESKTOP */
       .gradient-left {
         display: block;
         width: clamp(25%, 38%, 48%);
@@ -1220,7 +1231,6 @@
         position: fixed;
       }
 
-      /* BIGGER LOGO ON TALL SCREENS */
       .logo {
         position: absolute;
         left: 50%;
@@ -1259,7 +1269,6 @@
         object-fit: cover;
       }
 
-      /* REMOVE LEFT GRADIENT ON TALL SCREENS */
       .gradient-left {
         display: none;
       }
