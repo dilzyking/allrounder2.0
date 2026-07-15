@@ -84,7 +84,7 @@
       "id": "zee-eng",
       "name": "zee-eng",
       "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/tsn",
+      "iframeSrc": "https://fifa-world-cup-live.pages.dev/english",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
