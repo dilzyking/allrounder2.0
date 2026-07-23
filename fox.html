@@ -1,155 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="referrer" content="no-referrer">
-<title>Sonu // Live Stream</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/controls.css">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
-.shaka-video-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
-video{width:100%;height:100%;object-fit:contain;background:#000}
-video.mode-fill{object-fit:fill}
-video.mode-cover{object-fit:cover}
-.shaka-spinner-container,.shaka-spinner,.shaka-spinner-svg{display:none!important}
-.shaka-controls-container button{color:#fff!important}
-.shaka-fit-btn{background:transparent!important;border:none!important;cursor:pointer!important;padding:0 10px!important;opacity:.85;display:flex;align-items:center;justify-content:center;height:100%;transition:opacity .15s}
-.shaka-fit-btn:hover{opacity:1}
-.shaka-fit-btn svg{width:18px;height:18px;display:block}
-#loader{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9;opacity:0;pointer-events:none;transition:opacity .2s}
-#loader.on{opacity:1}
-.spin{width:36px;height:36px;border:3px solid rgba(255,255,255,.15);border-top-color:#38bdf8;border-radius:50%;animation:sp .75s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-</style>
+    <meta charset="UTF-8">
+    <title>DILLZY</title>
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Shaka Player v4.16.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7VPXZYQPN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L7VPXZYQPN');
+</script>
+    <style>
+        /* Reset & Fullscreen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Poppins', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .shaka-video-container {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Custom watermark */
+        .custom-watermark {
+            position: absolute;
+            z-index: 40;
+            pointer-events: none;
+            bottom: 80px;
+            right: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.10);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: #000;
+            color: #fff;
+            z-index: 2000;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, .15);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 12px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ---- Shaka UI overrides ---- */
+        .shaka-controls-container {
+            background: transparent !important;
+        }
+
+        .shaka-bottom-controls {
+            padding: 10px 16px;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* PROGRESS BAR */
+        .shaka-seek-bar-container {
+            display: block !important;
+            width: 100% !important;
+            height: 8px !important;
+            margin: 0 0 10px 0 !important;
+            padding: 0 !important;
+            order: -1 !important;
+            position: relative !important;
+        }
+
+        .shaka-seek-bar {
+            width: 100% !important;
+            height: 8px !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15) !important;
+            position: relative !important;
+        }
+
+        .shaka-seek-bar .shaka-range-element {
+            width: 100% !important;
+            height: 8px !important;
+            border-radius: 50px;
+            background: transparent !important;
+            position: relative !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            outline: none !important;
+        }
+
+        .shaka-seek-bar .shaka-range-element::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ff3b30;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.6);
+            border: 2px solid #fff;
+            margin-top: -5px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .shaka-seek-bar .shaka-range-element::-webkit-slider-runnable-track {
+            height: 8px !important;
+            border-radius: 50px;
+            background: transparent !important;
+        }
+
+        .shaka-seek-bar .shaka-range-element::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ff3b30;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.6);
+        }
+
+        .shaka-seek-bar .shaka-range-element::-moz-range-track {
+            height: 8px !important;
+            border-radius: 50px;
+            background: transparent !important;
+        }
+
+        /* Time & duration */
+        .shaka-current-time,
+        .shaka-time-duration {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            padding: 0 8px;
+        }
+
+        .shaka-bottom-controls > div {
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+        }
+
+        .shaka-controls-container button {
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.4));
+        }
+
+        .shaka-overflow-menu,
+        .shaka-settings-menu {
+            border-radius: 12px;
+            backdrop-filter: blur(18px);
+            background: rgba(20, 20, 20, 0.92);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .shaka-play-button-container {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 50%;
+        }
+
+        .shaka-volume-slider {
+            width: 60px;
+        }
+
+        /* Completely remove telegram popup */
+        #telegramModal,
+        .modal,
+        .modal-content,
+        #joinButton,
+        #closeButton,
+        .btn {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            z-index: -9999 !important;
+            border: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        @media (max-width: 700px) {
+            .custom-watermark {
+                font-size: 9px;
+                bottom: 70px;
+                right: 14px;
+            }
+            .shaka-seek-bar-container {
+                height: 6px !important;
+            }
+            .shaka-seek-bar {
+                height: 6px !important;
+            }
+            .shaka-seek-bar .shaka-range-element::-webkit-slider-thumb {
+                width: 14px;
+                height: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="shaka-video-container" id="pc">
-  <video id="v" autoplay playsinline preload="metadata"></video>
-  <div id="loader"><div class="spin"></div></div>
+<div class="shaka-video-container" id="player-container">
+    <video id="video" autoplay muted playsinline preload="metadata"></video>
+    <div class="custom-watermark">LIVE · FANCODE</div>
+
+    <!-- Loading overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        Analyzing the video...
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@5.1.8/dist/shaka-player.ui.min.js"></script>
+<!-- Telegram popup - COMPLETELY REMOVED -->
+<div id="telegramModal" class="modal hidden"></div>
+
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-  shaka.polyfill.installAll();
-  if (!shaka.Player.isBrowserSupported()) return;
+    (function() {
+        /* ========== CONFIG ========== */
+        const STREAM_URL =
+            "https://in-mc-flive.fancode.com/mumbai/143351_english_hls_7119dc88e319837_1ta-di_h264/index.m3u8";
 
-  const video     = document.getElementById('v');
-  const container = document.getElementById('pc');
-  const loader    = document.getElementById('loader');
+        /* ========== PLAYER INIT ========== */
+        async function initPlayer() {
+            const video = document.getElementById('video');
+            const container = document.getElementById('player-container');
+            const loading = document.getElementById('loading');
 
-  let playing = false;
-  const showLoader = () => { if (playing) loader.classList.add('on'); };
-  const hideLoader = () => { playing = true; loader.classList.remove('on'); };
+            shaka.polyfill.installAll();
+            if (!shaka.Player.isBrowserSupported()) {
+                alert('Browser not supported for Shaka Player');
+                return;
+            }
 
-  video.addEventListener('waiting',    showLoader);
-  video.addEventListener('stalled',    showLoader);
-  video.addEventListener('seeking',    showLoader);
-  video.addEventListener('playing',    hideLoader);
-  video.addEventListener('canplay',    hideLoader);
-  video.addEventListener('timeupdate', () => { if (!video.paused && video.currentTime > 0) hideLoader(); });
+            try {
+                const player = new shaka.Player();
+                await player.attach(video);
 
-  const player = new shaka.Player();
-  await player.attach(video);
+                const ui = new shaka.ui.Overlay(player, container, video);
 
-  const ui = new shaka.ui.Overlay(player, container, video);
-  ui.configure({
-    controlPanelElements: ['play_pause','time_and_duration','spacer','quality','fullscreen','overflow_menu'],
-    overflowMenuButtons:  ['language','captions','playback_rate','picture_in_picture'],
-    seekBarColors: { base:'rgba(209,213,219,.25)', buffered:'rgba(139,0,0,.45)', played:'#22c55e' },
-    fadeDelay: 3
-  });
+                ui.configure({
+                    addBigPlayButton: true,
+                    addSeekBar: true,
+                    controlPanelElements: [
+                        "mute",
+                        "play_pause",
+                        "time_and_duration",
+                        "spacer",
+                        "quality",
+                        "picture_in_picture",
+                        "fullscreen"
+                    ],
+                    seekBarColors: {
+                        base: "rgba(255,255,255,0.2)",
+                        buffered: "rgba(255,255,255,0.4)",
+                        played: "#ff3b30"
+                    }
+                });
 
-  const STREAM_URL = 'https://sundirectgo-live.pc.cdn.bitgravity.com/svchd14/dth.mpd';
-  const RAW_KEYS = '128d616247ecfba91bcd5744d0df1dc5:bc146f6794d0cb5298e71bbe2c0cd41c';
-  const clearKeys = Object.fromEntries(
-    RAW_KEYS.split(',').map(pair => pair.trim().split(':'))
-  );
+                player.configure({
+                    streaming: {
+                        bufferingGoal: 10,
+                        rebufferingGoal: 2,
+                        safeSeekOffset: 5,
+                        lowLatencyMode: true
+                    }
+                });
 
-  player.configure({
-    drm: { clearKeys },
-    manifest: {
-      defaultPresentationDelay: 4,
-      ignoreTextStreamFailures: true,
-      dash: { autoCorrectDrift: true, ignoreMinBufferTime: true }
-    },
-    abr: {
-      enabled: true,
-      defaultBandwidthEstimate: 2000000,
-      bandwidthUpgradeTarget: 0.85,
-      bandwidthDowngradeTarget: 0.95,
-      restrictions: { maxHeight: 1080 }
-    }
-  });
-  player.configurationForLowLatency({
-    streaming: {
-      inaccurateManifestTolerance: 0,
-      segmentPrefetchLimit: 2,
-      updateIntervalSeconds: 0.1,
-      maxDisabledTime: 1,
-      bufferingGoal: 10,
-      rebufferingGoal: 2,
-      bufferBehind: 30,
-      safeSeekOffset: 3,
-      retryParameters: { baseDelay: 100, maxAttempts: 5, backoffFactor: 1.5, fuzzFactor: 0.5 }
-    },
-    manifest: {
-      dash: { autoCorrectDrift: true },
-      retryParameters: { baseDelay: 100 }
-    },
-    drm: {
-      retryParameters: { baseDelay: 100 }
-    }
-  });
+                await player.load(STREAM_URL);
 
-  player.getNetworkingEngine().registerRequestFilter((type, request) => {
-    request.headers['Referer']    = 'https://www.cricbuzz.com/';
-    request.headers['User-Agent'] = 'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36';
-  });
+                video.muted = false;
+                await video.play().catch(() => {
+                    video.muted = true;
+                    video.play();
+                });
 
-  try { await player.load(STREAM_URL); } catch (_) {}
+                video.addEventListener('playing', () => {
+                    loading.style.display = 'none';
+                });
 
-  const MODES = ['contain','fill','cover'];
-  const ICONS = {
-    contain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="21" x2="22" y2="21"/></svg>',
-    fill:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
-    cover:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 7l3 3m0 0H7m2 0V8m9-1l-3 3m0 0h2m-2 0V8M6 13l3-3m0 0H7m2 0v2m9 1l-3-3m0 0h2m-2 0v2"/></svg>'
-  };
-  let modeIdx = 0;
+                // FIX: Properly handle pause/resume
+                // Remove any conflicting event listeners
+                video.removeEventListener('pause', null);
 
-  function injectFitButton(cnt, vid) {
-    const poll = setInterval(() => {
-      const panel = cnt.querySelector('.shaka-controls-button-panel');
-      if (!panel) return;
-      clearInterval(poll);
-      const btn = document.createElement('button');
-      btn.className = 'shaka-fit-btn';
-      btn.title     = 'Toggle fit mode';
-      btn.innerHTML = ICONS.contain;
-      const anchor = panel.querySelector('.shaka-fullscreen-button');
-      if (anchor) panel.insertBefore(btn, anchor); else panel.appendChild(btn);
-      function applyMode(idx) {
-        modeIdx = idx;
-        const m = MODES[idx];
-        vid.classList.remove('mode-fill','mode-cover');
-        if (m === 'fill')  vid.classList.add('mode-fill');
-        if (m === 'cover') vid.classList.add('mode-cover');
-        btn.innerHTML = ICONS[m];
-      }
-      btn.addEventListener('click', e => { e.stopPropagation(); applyMode((modeIdx + 1) % MODES.length); });
-      ['fullscreenchange','webkitfullscreenchange'].forEach(ev => {
-        document.addEventListener(ev, () => {
-          if (!(document.fullscreenElement || document.webkitFullscreenElement)) applyMode(0);
+                // Only handle pause if it's not user-initiated (like buffering)
+                // We'll use a flag to track user interaction
+                let userPaused = false;
+
+                // When user clicks pause button, set flag
+                document.addEventListener('click', function(e) {
+                    const pauseBtn = e.target.closest('.shaka-play-button');
+                    if (pauseBtn) {
+                        // Check if video is currently playing
+                        if (!video.paused) {
+                            userPaused = true;
+                        } else {
+                            userPaused = false;
+                        }
+                    }
+                });
+
+                // Handle pause event
+                video.addEventListener('pause', function() {
+                    // If video is paused and it's not the end
+                    if (!video.ended && !userPaused) {
+                        // This is an automatic pause (buffering, etc.)
+                        // Try to resume after a short delay
+                        setTimeout(() => {
+                            if (video.paused && !video.ended) {
+                                video.play().catch(() => {});
+                            }
+                        }, 500);
+                    }
+                    // Reset flag after pause
+                    setTimeout(() => {
+                        userPaused = false;
+                    }, 100);
+                });
+
+                // Also handle play button clicks through Shaka UI
+                // Listen for play event to reset userPaused
+                video.addEventListener('play', function() {
+                    userPaused = false;
+                });
+
+                // Fallback: check every 2 seconds if video is stuck paused
+                setInterval(() => {
+                    if (video.paused && !video.ended && !userPaused) {
+                        // Check if it's been paused for more than 3 seconds
+                        video.play().catch(() => {});
+                    }
+                }, 3000);
+
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 6000);
+
+                setTimeout(() => {
+                    const seekBar = document.querySelector('.shaka-seek-bar-container');
+                    if (seekBar) {
+                        seekBar.style.display = 'block !important';
+                        seekBar.style.visibility = 'visible !important';
+                        seekBar.style.opacity = '1 !important';
+                    }
+                }, 500);
+
+            } catch (e) {
+                console.warn('Shaka error, falling back to native HLS:', e);
+                video.src = STREAM_URL;
+                video.muted = false;
+                video.play().catch(() => {
+                    video.muted = true;
+                    video.play();
+                });
+                video.addEventListener('playing', () => {
+                    loading.style.display = 'none';
+                });
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 6000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'flex';
+            initPlayer();
         });
-      });
-    }, 50);
-  }
 
-  injectFitButton(container, video);
-});
+    })();
 </script>
+
+<script>(function(s){s.dataset.zone='10603308',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
 </body>
 </html>
