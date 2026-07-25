@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>VK Player</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plyr HLS Player</title>
+
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
 
 <style>
 html,body{
@@ -13,22 +15,128 @@ html,body{
     background:#000;
     overflow:hidden;
 }
-iframe{
+
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.player-wrapper{
     width:100vw;
     height:100vh;
-    border:none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+}
+
+video,
+.plyr{
+    width:100%;
+    height:100%;
+}
+
+video{
+    object-fit:contain;
+}
+
+.plyr__video-wrapper{
+    height:100%;
 }
 </style>
 </head>
+
 <body>
 
-<iframe
-    src="https://usa.mdtv.dpdns.org/live-vkvideo.php"
-    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-    allowfullscreen
-    loading="eager"
-    referrerpolicy="no-referrer">
-</iframe>
+<div class="player-wrapper">
+    <video id="player" playsinline controls autoplay muted></video>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+<script>
+const mobileUrl =
+'https://vsd128.okcdn.ru/cmaf/16975412333141/sig/_4LIaC4pCT8/expires/1785061251544/srcIp/66.78.59.15/urls/185.226.55.73/clientType/36/srcAg/CHROME_ANDROID/mid/15267412330325/get/hls_15267412330325.YQNfrjzxRZI.m3u8';
+
+const desktopUrl =
+'https://vsd128.okcdn.ru/cmaf/16975412333141/sig/EZjiN_4fOb8/expires/1785061153966/srcIp/66.78.59.15/urls/178.237.29.12/clientType/36/srcAg/GECKO/mid/15267412330325/get/hls_15267412330325.YQNfrjzxRZI.m3u8';
+
+function isMobile(){
+    return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent);
+}
+
+const source = isMobile() ? mobileUrl : desktopUrl;
+
+const video = document.getElementById("player");
+
+if (Hls.isSupported()) {
+
+    const hls = new Hls({
+        enableWorker:true,
+        lowLatencyMode:true,
+        backBufferLength:90
+    });
+
+    hls.loadSource(source);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED,function(){
+
+        const qualities = hls.levels
+            .map(level => level.height)
+            .filter((v,i,a)=>a.indexOf(v)===i)
+            .sort((a,b)=>b-a);
+
+        const player = new Plyr(video,{
+            autoplay:true,
+            muted:true,
+            controls:[
+                'play-large',
+                'play',
+                'progress',
+                'current-time',
+                'mute',
+                'volume',
+                'settings',
+                'pip',
+                'airplay',
+                'fullscreen'
+            ],
+            settings:['quality','speed'],
+            quality:{
+                default:qualities[0],
+                options:qualities,
+                forced:true,
+                onChange:function(q){
+                    hls.levels.forEach(function(level,index){
+                        if(level.height===q){
+                            hls.currentLevel=index;
+                        }
+                    });
+                }
+            }
+        });
+
+        window.player = player;
+
+        video.play().catch(()=>{});
+    });
+
+} else if(video.canPlayType('application/vnd.apple.mpegurl')) {
+
+    video.src = source;
+
+    const player = new Plyr(video,{
+        autoplay:true,
+        muted:true
+    });
+
+    video.play().catch(()=>{});
+}
+</script>
 <script>(function(s){s.dataset.zone='10603308',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  
 </body>
 </html>
