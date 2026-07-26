@@ -174,6 +174,7 @@
         let hlsInstance = null;
         let plyrInstance = null;
         let userPaused = false;
+        let isInitialized = false;
 
         /* ========== HELPERS ========== */
         function hideLoading() {
@@ -217,10 +218,10 @@
 
             // Handle automatic pauses (buffering, etc.)
             video.addEventListener('pause', function() {
-                if (!video.ended && !userPaused) {
+                if (!video.ended && !userPaused && isInitialized) {
                     // Auto-resume after a short delay
                     setTimeout(() => {
-                        if (video.paused && !video.ended) {
+                        if (video.paused && !video.ended && !userPaused) {
                             video.play().catch(() => {});
                         }
                     }, 500);
@@ -233,7 +234,7 @@
 
             // Periodic check: if video is stuck paused, resume
             setInterval(() => {
-                if (video.paused && !video.ended && !userPaused) {
+                if (video.paused && !video.ended && !userPaused && isInitialized) {
                     video.play().catch(() => {});
                 }
             }, 3000);
@@ -288,16 +289,21 @@
                             }
                         });
 
-                        // Unmute and play
+                        // ========== KEY CHANGE: Start with pause but unmuted ==========
+                        // First ensure video is unmuted
                         video.muted = false;
-                        video.play().catch(() => {
-                            video.muted = true;
-                            video.play();
-                        });
+                        
+                        // Load the stream but don't autoplay - keep it paused
+                        // The video will be paused initially with the big play button visible
+                        // We need to make sure it stays paused after loading
+                        video.pause();
+                        
+                        // Mark as initialized so the auto-resume logic doesn't kick in
+                        isInitialized = true;
 
-                        // Hide loading once playing
-                        video.addEventListener('playing', hideLoading);
-                        setTimeout(hideLoading, 5000);
+                        // Hide loading once stream is ready
+                        video.addEventListener('loadeddata', hideLoading);
+                        setTimeout(hideLoading, 3000);
 
                         // Setup pause/resume logic
                         setupPauseResumeLogic(video);
@@ -339,8 +345,10 @@
             destroyPlayer();
 
             video.src = STREAM_URL;
+            
+            // ========== KEY CHANGE: Start with pause but unmuted ==========
             video.muted = false;
-
+            
             // Init Plyr without quality settings
             plyrInstance = new Plyr(video, {
                 controls: [
@@ -349,13 +357,14 @@
                 ]
             });
 
-            video.play().catch(() => {
-                video.muted = true;
-                video.play();
-            });
+            // Keep it paused initially
+            video.pause();
+            
+            // Mark as initialized
+            isInitialized = true;
 
-            video.addEventListener('playing', hideLoading);
-            setTimeout(hideLoading, 5000);
+            video.addEventListener('loadeddata', hideLoading);
+            setTimeout(hideLoading, 3000);
 
             setupPauseResumeLogic(video);
         }
@@ -368,7 +377,7 @@
         // Handle visibility change to resume if needed
         document.addEventListener('visibilitychange', () => {
             const video = DOM.video;
-            if (!document.hidden && video && video.paused && !video.ended) {
+            if (!document.hidden && video && video.paused && !video.ended && isInitialized) {
                 video.play().catch(() => {});
             }
         });
