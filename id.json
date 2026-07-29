@@ -4,7 +4,7 @@
       "id": "hindi",
       "name": "Star Sports Hindi",
       "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/hindi",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/hindi",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
@@ -12,7 +12,7 @@
       "id": "sony-liv",
       "name": "Star Sports Hindi",
       "type": "iframe",
-      "iframeSrc": "https://allrounder2-0.pages.dev/sony-2",
+      "iframeSrc": "https://allrounder3-0.pages.dev/sony-2",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
@@ -247,7 +247,7 @@
       "id": "willow",
       "name": "Willow",
       "type": "iframe",
-      "iframeSrc": "https://allrounder2-0.pages.dev/cricket/willow",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/willow",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=willow",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=willow"
     },
@@ -335,7 +335,7 @@
       "id": "eng",
       "name": "Star Sports Select",
       "type": "iframe",
-      "iframeSrc": "https://allrounder2-0.pages.dev/fox",
+      "iframeSrc": "https://allrounder3-0.pages.dev/fox",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=eng",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=eng"
     },
