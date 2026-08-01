@@ -1,108 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NBCU Local Live Player</title>
-
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7VPXZYQPN"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-L7VPXZYQPN');
-</script>
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:#000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    font-family:Arial,sans-serif;
-}
-
-.player-container{
-    width:100%;
-    max-width:1400px;
-}
-
-video{
-    width:100%;
-    height:auto;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Full‑Page Plyr Player · Adaptive Device</title>
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <!-- HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.17/dist/hls.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #0b0b0b;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        #player-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-height: 100dvh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #player-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .plyr {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 100vh;
+            border-radius: 0;
+            background: #000;
+        }
+        .plyr__controls {
+            background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%);
+            padding: 20px 15px 15px;
+        }
+        .plyr__video-wrapper {
+            background: #000;
+            height: 100%;
+        }
+        .loading-txt {
+            position: absolute;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        @media (max-width: 480px) {
+            .plyr__controls button {
+                padding: 10px 12px;
+            }
+        }
+        /* Device badge - shows MAC or CHROME */
+        .device-badge {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.15);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+        .device-badge.mac {
+            background: rgba(50, 50, 60, 0.8);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #a8a8b8;
+        }
+        .device-badge.chrome {
+            background: rgba(30, 40, 50, 0.8);
+            border-color: rgba(66, 133, 244, 0.4);
+            color: #8ab4f8;
+        }
+        .device-badge.other {
+            background: rgba(40, 40, 40, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+    </style>
 </head>
 <body>
-
-<div class="player-container">
-    <video
-        id="player"
-        controls
-        playsinline
-        crossorigin
-    ></video>
+<div id="player-container">
+    <div class="loading-txt" id="loadingLabel">Loading stream …</div>
+    <video id="player" playsinline controls></video>
+    <!-- Dynamic device badge -->
+    <div class="device-badge" id="deviceBadge">● DEVICE</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-
 <script>
-const video = document.getElementById('player');
+    (function() {
+        "use strict";
 
-const streamUrl =
-'https://ab2262fdd9c5.aps33.playlist.live-video.net/v1/playlist/CoYG5CoYp6gzx64zgq4mtSM6Lz0d4V5hTJBeXYxCKQfliM-pRC24oAvs2LAhBXMCck-MYp3KwLvn6FsuPJvVnMJGRcbWKk9DYTBtQjFSgEQ29yvRjotro19ePrWyn1CHxp8kGcTXkgk8rjDLWNwNZZqBE7t1_GR6oPYFv9v1WmmDl9Uu_aLRuxkVbANezi_rJDcRqTgUcNyqe2c-r7GxLSgOy_Grx9KBAtReBQ5xG5TUKfTzxALZh0BomaZh3g6JuVnQczjZ4uAuDnsgU8bf6BXaUugnMXIfXmKmf7BN1PvW42DsdiSwbkJWfLRfrva5bg3uKi-XHWGgcqWqb02dilM2eYH9J3Z7dapsGPuI6cDGVYJpOFEpzDlbRUqmxtL3M3LYQbXR3fGBNxWvZauvwNvlcAcgXraUVmCaIdbgbwth3LX0oT23HlXJllayhzdHPaU84Qi6Ma5m7x_pmnREPUDmKwWIlnVa6nNSLVkPLXa_RYLKye9UZHDEXhTdux7l13RaO4TZq_f83Z_furKH74DYKIdbvLb6MI3SFtUGmOa_1vL2ZkvspfvYgPb352RKELTf30K1IkfosleJ6oU3eFyDdsj482m9YTWC8o7uyhEFxwOoqrUiRlI5XAylUb1Ob-rLugU9sw1qv-PRpk5IosbyLYoFRZ20aeT9lsYw-511y02T4xbO7Qyn4JYldIuOEzhB9w1iXdPkgFeVCuuPAo5hJrKRFD7B4UxlTmi_RYMITnYLW6wX0pcJEMFVujLbUGks_aiFfVL7aJoqBPXh_6qakvBaQunGiTiII20aw8JGcL9OaMaSwgE5SHOtDVwtfscscqhBzCUGpKIKsJGc9MC25xNQt6qZEetcM91AM4rSFJgK4LSXmGb1SMJ0iCPgCUya6h83fkCy2iBDS4pl0QSokBVZSQF1dntTOJV94nFDJuOn4jm2Aufg7BHywQlm2vboyX1xmPFD4o232ZS7xtFTB-28sBm4TK0nYDHnsqipIwPXxNZjOEMRVeveCnBgJW4rT2yYWpsjGgwYBdxXqcV_scR8UlcgASoJdXMtd2VzdC0yMN4P.m3u8';
+        // ---------- THE M3U8 URL ----------
+        const STREAM_URL = "https://vsd140.okcdn.ru/cmaf/19093640579839/sig/HbUDilBJXA0/expires/1785710825551/srcIp/152.58.187.152/urls/178.237.29.195/clientType/36/srcAg/CHROME/mid/16092691318783/get/hls_16092691318783.yby-KwAqROE.m3u8";
 
-const player = new Plyr(video, {
-    controls: [
-        'play-large',
-        'play',
-        'progress',
-        'current-time',
-        'mute',
-        'volume',
-        'settings',
-        'pip',
-        'airplay',
-        'fullscreen'
-    ],
-    settings: ['speed'],
-    speed: {
-        selected: 1,
-        options: [0.5, 0.75, 1, 1.25, 1.5, 2]
-    }
-});
+        // ---------- ELEMENTS ----------
+        const video = document.getElementById('player');
+        const loadingLabel = document.getElementById('loadingLabel');
+        const deviceBadge = document.getElementById('deviceBadge');
 
-if (Hls.isSupported()) {
-    const hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true
-    });
+        // ---------- DETECT DEVICE (MAC vs CHROME vs OTHER) ----------
+        function detectDevice() {
+            const ua = navigator.userAgent || '';
+            const platform = navigator.platform || '';
+            
+            // Check for Mac
+            const isMac = /Mac|iPhone|iPad|iPod/.test(platform) || 
+                          (ua.includes('Mac OS X') && !ua.includes('Windows')) ||
+                          /Macintosh/.test(ua);
+            
+            // Check for Chrome browser
+            const isChrome = /Chrome/.test(ua) && !/Edg|OPR|Brave/.test(ua);
+            
+            // Check for Safari (often on Mac)
+            const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
+            
+            // Determine device label
+            let deviceLabel = 'OTHER';
+            let badgeClass = 'other';
+            
+            if (isMac) {
+                deviceLabel = 'MAC';
+                badgeClass = 'mac';
+            } else if (isChrome) {
+                deviceLabel = 'CHROME';
+                badgeClass = 'chrome';
+            } else {
+                // Check if it's any other browser on Mac (Safari, Firefox, etc.)
+                if (ua.includes('Mac OS X') || platform.includes('Mac')) {
+                    deviceLabel = 'MAC';
+                    badgeClass = 'mac';
+                }
+            }
+            
+            return { deviceLabel, badgeClass, isMac, isChrome, isSafari };
+        }
 
-    hls.loadSource(streamUrl);
-    hls.attachMedia(video);
+        // ---------- UPDATE BADGE ----------
+        function updateBadge() {
+            const { deviceLabel, badgeClass } = detectDevice();
+            deviceBadge.textContent = `⚡ ${deviceLabel}`;
+            deviceBadge.className = `device-badge ${badgeClass}`;
+            console.log(`[Device] Detected: ${deviceLabel} (class: ${badgeClass})`);
+        }
 
-    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        video.play().catch(() => {});
-    });
+        // ---------- INITIALIZE ----------
+        let hls = null;
+        let plyr = null;
 
-} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = streamUrl;
-    video.addEventListener('loadedmetadata', function () {
-        video.play().catch(() => {});
-    });
-}
+        function loadPlyrAndInit() {
+            if (typeof Plyr !== 'undefined') {
+                initPlyr();
+            } else {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.plyr.io/3.7.8/plyr.js';
+                script.onload = initPlyr;
+                script.onerror = () => {
+                    console.warn('Plyr failed, using native');
+                    video.controls = true;
+                    initHLS();
+                };
+                document.head.appendChild(script);
+            }
+        }
+
+        function initPlyr() {
+            if (!video) return;
+            if (plyr) {
+                plyr.destroy();
+                plyr = null;
+            }
+
+            plyr = new Plyr(video, {
+                controls: [
+                    'play-large',
+                    'play',
+                    'progress',
+                    'current-time',
+                    'mute',
+                    'volume',
+                    'captions',
+                    'settings',
+                    'pip',
+                    'fullscreen'
+                ],
+                settings: ['quality', 'speed', 'loop'],
+                quality: {
+                    default: 0,
+                    options: [0, 720, 540, 480, 360, 240]
+                },
+                autoplay: false,
+                muted: false,
+                clickToPlay: true,
+                fullscreen: { enabled: true, fallback: true },
+                ratio: '16:9',
+                responsive: true,
+                storage: { enabled: false }
+            });
+
+            initHLS();
+            if (loadingLabel) loadingLabel.style.display = 'none';
+        }
+
+        // ---------- HLS INIT ----------
+        function initHLS() {
+            if (!video) return;
+
+            if (typeof Hls === 'undefined') {
+                console.warn('HLS.js not loaded');
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = STREAM_URL;
+                    video.controls = true;
+                    if (plyr) {
+                        plyr.source = { type: 'video', sources: [{ src: STREAM_URL, provider: 'hls' }] };
+                    }
+                    video.play().catch(e => console.warn('Autoplay blocked', e));
+                }
+                return;
+            }
+
+            if (hls) {
+                hls.destroy();
+                hls = null;
+            }
+
+            const device = detectDevice();
+            let initialBandwidth = 2000000; // 2 Mbps default
+            
+            // Adjust bandwidth based on device
+            if (device.isMac) {
+                initialBandwidth = 4000000; // Macs tend to have better networking
+            } else if (device.isChrome) {
+                initialBandwidth = 3000000;
+            }
+
+            // Check actual connection
+            if (navigator.connection && navigator.connection.downlink) {
+                const downlinkMbps = navigator.connection.downlink;
+                const estBps = downlinkMbps * 1000 * 1000;
+                if (estBps > 100000) {
+                    initialBandwidth = Math.min(estBps * 0.8, 10000000);
+                }
+                if (initialBandwidth < 300000) initialBandwidth = 300000;
+            }
+
+            console.log(`[HLS] Initial bandwidth: ${Math.round(initialBandwidth/1000)} kbps`);
+
+            hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: false,
+                maxBufferLength: 30,
+                maxMaxBufferLength: 60,
+                abrEwmaDefaultEstimate: initialBandwidth,
+                startLevel: -1
+            });
+
+            hls.loadSource(STREAM_URL);
+            hls.attachMedia(video);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                console.log('[HLS] Manifest parsed, levels:', data.levels.length);
+
+                if (plyr && data.levels) {
+                    const qualities = data.levels.map((level, index) => ({
+                        label: level.height ? `${level.height}p` : `Level ${index}`,
+                        value: index
+                    }));
+                    qualities.unshift({ label: 'Auto', value: -1 });
+                    plyr.quality = {
+                        default: -1,
+                        options: qualities.map(q => q.value),
+                        label: qualities.map(q => q.label)
+                    };
+                    plyr.elements.quality.options = qualities;
+                }
+
+                video.play().catch(e => console.warn('Autoplay blocked', e));
+                if (loadingLabel) loadingLabel.style.display = 'none';
+            });
+
+            hls.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {
+                const level = hls.levels[data.level];
+                if (level) {
+                    console.log(`[HLS] Switched to level ${data.level} (${level.height}p)`);
+                }
+            });
+
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                if (data.fatal) {
+                    console.error('[HLS] Fatal error:', data);
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
+
+        // ---------- START ----------
+        // Update the badge with device info
+        updateBadge();
+        
+        // Load the player
+        loadPlyrAndInit();
+
+        // Fallback: if HLS not loaded after 5s
+        setTimeout(() => {
+            if (!hls && !video.src) {
+                console.warn('HLS fallback');
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = STREAM_URL;
+                    video.controls = true;
+                    if (plyr) {
+                        plyr.source = { type: 'video', sources: [{ src: STREAM_URL, provider: 'hls' }] };
+                    }
+                    video.play().catch(e => console.warn('Autoplay blocked', e));
+                    if (loadingLabel) loadingLabel.style.display = 'none';
+                }
+            }
+        }, 5000);
+
+        // Re-detect on visibility change (in case user switches browser)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updateBadge();
+            }
+        });
+
+        window.__player = { plyr, hls, video };
+        console.log('[Player] Full‑page plyr with device detection ready.');
+
+    })();
 </script>
-<script>(function(s){s.dataset.zone='10603308',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <script>(function(s){s.dataset.zone='10603308',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   
 </body>
 </html>
