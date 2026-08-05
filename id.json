@@ -175,7 +175,7 @@
       "id": "tnt",
       "name": "TNT Sports",
       "type": "iframe",
-      "iframeSrc": "https://allrounder-live12.pages.dev/channel/tnt-2",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/tnt",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=tnt",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=tnt"
     },
