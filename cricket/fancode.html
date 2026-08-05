@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DILLZY</title>
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Shaka Player v4.16.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7VPXZYQPN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L7VPXZYQPN');
+</script>
+    <style>
+        /* Reset & Fullscreen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Poppins', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .shaka-video-container {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Custom watermark */
+        .custom-watermark {
+            position: absolute;
+            z-index: 40;
+            pointer-events: none;
+            bottom: 80px;
+            right: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.10);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: #000;
+            color: #fff;
+            z-index: 2000;
+            font-size: 18px;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, .15);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 12px;
+        }
+        .loading-text {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ---- Shaka UI overrides ---- */
+        .shaka-controls-container {
+            background: transparent !important;
+        }
+
+        .shaka-bottom-controls {
+            padding: 10px 16px;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* PROGRESS BAR */
+        .shaka-seek-bar-container {
+            display: block !important;
+            width: 100% !important;
+            height: 8px !important;
+            margin: 0 0 10px 0 !important;
+            padding: 0 !important;
+            order: -1 !important;
+            position: relative !important;
+        }
+
+        .shaka-seek-bar {
+            width: 100% !important;
+            height: 8px !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15) !important;
+            position: relative !important;
+        }
+
+        .shaka-seek-bar .shaka-range-element {
+            width: 100% !important;
+            height: 8px !important;
+            border-radius: 50px;
+            background: transparent !important;
+            position: relative !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            outline: none !important;
+        }
+
+        .shaka-seek-bar .shaka-range-element::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ff3b30;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.6);
+            border: 2px solid #fff;
+            margin-top: -5px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .shaka-seek-bar .shaka-range-element::-webkit-slider-runnable-track {
+            height: 8px !important;
+            border-radius: 50px;
+            background: transparent !important;
+        }
+
+        .shaka-seek-bar .shaka-range-element::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ff3b30;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.6);
+        }
+
+        .shaka-seek-bar .shaka-range-element::-moz-range-track {
+            height: 8px !important;
+            border-radius: 50px;
+            background: transparent !important;
+        }
+
+        /* Time & duration */
+        .shaka-current-time,
+        .shaka-time-duration {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            padding: 0 8px;
+        }
+
+        .shaka-bottom-controls > div {
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+        }
+
+        .shaka-controls-container button {
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.4));
+        }
+
+        .shaka-overflow-menu,
+        .shaka-settings-menu {
+            border-radius: 12px;
+            backdrop-filter: blur(18px);
+            background: rgba(20, 20, 20, 0.92);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .shaka-play-button-container {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 50%;
+        }
+
+        .shaka-volume-slider {
+            width: 60px;
+        }
+
+        /* Completely remove telegram popup */
+        #telegramModal,
+        .modal,
+        .modal-content,
+        #joinButton,
+        #closeButton,
+        .btn {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            z-index: -9999 !important;
+            border: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        @media (max-width: 700px) {
+            .custom-watermark {
+                font-size: 9px;
+                bottom: 70px;
+                right: 14px;
+            }
+            .shaka-seek-bar-container {
+                height: 6px !important;
+            }
+            .shaka-seek-bar {
+                height: 6px !important;
+            }
+            .shaka-seek-bar .shaka-range-element::-webkit-slider-thumb {
+                width: 14px;
+                height: 14px;
+            }
+            .loading-text {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="shaka-video-container" id="player-container">
+    <video id="video" autoplay playsinline preload="metadata"></video>
+    <div class="custom-watermark">LIVE · FANCODE</div>
+
+    <!-- Loading overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Please wait...</div>
+    </div>
+</div>
+
+<!-- Telegram popup - COMPLETELY REMOVED -->
+<div id="telegramModal" class="modal hidden"></div>
+
+<script>
+    (function() {
+        /* ========== CONFIG ========== */
+        const STREAM_URL =
+            "https://in-mc-flive.fancode.com/mumbai/4247969_english_hls_530117550a4719_1ta-di_h264/1080p.m3u8?hdntl=Expires=1786002244~_GO=Generated~acl=/mumbai/4247969_english_hls_530117550a4719_1ta-di_h264/*~Signature=AYCJ36SaBLmME-ylhhQIz2iRCEUXtQWrmMji4RLW8vJXKN3HPoNYAQjzjGyJKojxHIZV1fBqMKoTAZ_4VIkGJezmx3kO";
+
+        /* ========== PLAYER INIT ========== */
+        async function initPlayer() {
+            const video = document.getElementById('video');
+            const container = document.getElementById('player-container');
+            const loading = document.getElementById('loading');
+
+            // Hide loading immediately when video can play
+            video.addEventListener('canplay', function() {
+                loading.classList.add('hidden');
+            });
+
+            // Also hide on playing event
+            video.addEventListener('playing', function() {
+                loading.classList.add('hidden');
+                // Ensure sound is on when playing starts
+                video.muted = false;
+                video.volume = 1.0;
+            });
+
+            shaka.polyfill.installAll();
+            if (!shaka.Player.isBrowserSupported()) {
+                alert('Browser not supported for Shaka Player');
+                return;
+            }
+
+            try {
+                const player = new shaka.Player();
+                await player.attach(video);
+
+                const ui = new shaka.ui.Overlay(player, container, video);
+
+                ui.configure({
+                    addBigPlayButton: true,
+                    addSeekBar: true,
+                    controlPanelElements: [
+                        "mute",
+                        "play_pause",
+                        "time_and_duration",
+                        "spacer",
+                        "quality",
+                        "picture_in_picture",
+                        "fullscreen"
+                    ],
+                    seekBarColors: {
+                        base: "rgba(255,255,255,0.2)",
+                        buffered: "rgba(255,255,255,0.4)",
+                        played: "#ff3b30"
+                    }
+                });
+
+                player.configure({
+                    streaming: {
+                        bufferingGoal: 10,
+                        rebufferingGoal: 2,
+                        safeSeekOffset: 5,
+                        lowLatencyMode: true
+                    }
+                });
+
+                await player.load(STREAM_URL);
+
+                // Remove muted attribute and ensure sound is on
+                video.muted = false;
+                video.volume = 1.0;
+                
+                // Try to play with sound
+                try {
+                    await video.play();
+                    // Hide loading immediately if play succeeds
+                    loading.classList.add('hidden');
+                } catch (e) {
+                    // If autoplay with sound is blocked, try a user gesture approach
+                    console.log('Autoplay with sound blocked, waiting for user interaction');
+                    // Add a one-time click handler to unmute and play
+                    const unmuteHandler = function() {
+                        video.muted = false;
+                        video.volume = 1.0;
+                        video.play().catch(() => {});
+                        loading.classList.add('hidden');
+                        document.removeEventListener('click', unmuteHandler);
+                        document.removeEventListener('touchstart', unmuteHandler);
+                    };
+                    document.addEventListener('click', unmuteHandler);
+                    document.addEventListener('touchstart', unmuteHandler);
+                }
+
+                // FIX: Properly handle pause/resume
+                let userPaused = false;
+
+                // When user clicks pause button, set flag
+                document.addEventListener('click', function(e) {
+                    const pauseBtn = e.target.closest('.shaka-play-button');
+                    if (pauseBtn) {
+                        if (!video.paused) {
+                            userPaused = true;
+                        } else {
+                            userPaused = false;
+                        }
+                    }
+                });
+
+                // Handle pause event
+                video.addEventListener('pause', function() {
+                    if (!video.ended && !userPaused) {
+                        setTimeout(() => {
+                            if (video.paused && !video.ended) {
+                                video.muted = false;
+                                video.volume = 1.0;
+                                video.play().catch(() => {});
+                            }
+                        }, 500);
+                    }
+                    setTimeout(() => {
+                        userPaused = false;
+                    }, 100);
+                });
+
+                video.addEventListener('play', function() {
+                    userPaused = false;
+                    video.muted = false;
+                    video.volume = 1.0;
+                    loading.classList.add('hidden');
+                });
+
+                // Fallback: hide loading after 3 seconds max
+                setTimeout(() => {
+                    loading.classList.add('hidden');
+                }, 3000);
+
+                setTimeout(() => {
+                    const seekBar = document.querySelector('.shaka-seek-bar-container');
+                    if (seekBar) {
+                        seekBar.style.display = 'block !important';
+                        seekBar.style.visibility = 'visible !important';
+                        seekBar.style.opacity = '1 !important';
+                    }
+                }, 500);
+
+            } catch (e) {
+                console.warn('Shaka error, falling back to native HLS:', e);
+                video.src = STREAM_URL;
+                video.muted = false;
+                video.volume = 1.0;
+                
+                video.addEventListener('canplay', function() {
+                    loading.classList.add('hidden');
+                });
+                
+                video.play().catch(() => {
+                    const unmuteHandler = function() {
+                        video.muted = false;
+                        video.volume = 1.0;
+                        video.play().catch(() => {});
+                        loading.classList.add('hidden');
+                        document.removeEventListener('click', unmuteHandler);
+                        document.removeEventListener('touchstart', unmuteHandler);
+                    };
+                    document.addEventListener('click', unmuteHandler);
+                    document.addEventListener('touchstart', unmuteHandler);
+                });
+                
+                video.addEventListener('playing', function() {
+                    loading.classList.add('hidden');
+                    video.muted = false;
+                    video.volume = 1.0;
+                });
+                
+                // Fallback: hide loading after 3 seconds max
+                setTimeout(() => {
+                    loading.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loading = document.getElementById('loading');
+            if (loading) loading.classList.remove('hidden');
+            initPlayer();
+        });
+
+    })();
+</script>
+
+<script>(function(s){s.dataset.zone='10603308',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+</body>
+</html>
