@@ -114,54 +114,6 @@
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
 
-   {
-      "id": "dsports",
-      "name": "D Sports",
-      "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/dsports",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
-   {
-      "id": "fox-sports",
-      "name": "Fox",
-      "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/fox-sports",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
-   {
-      "id": "telemundo",
-      "name": "Star Sports Hindi",
-      "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/telemundo",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
-   {
-      "id": "caze-tv",
-      "name": "caze Tv",
-      "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/caze-tv",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
-   {
-      "id": "benin",
-      "name": "benin",
-      "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/benin",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
-   {
-      "id": "sportv",
-      "name": "Star Sports Hindi",
-      "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/sportv",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
     {
       "id": "kayo",
       "name": "cricbuzz",
@@ -231,7 +183,7 @@
       "id": "fancode",
       "name": "Fancode",
       "type": "iframe",
-      "iframeSrc": "https://allrounder-live12.pages.dev/hls",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/fancode",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=tnt",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=tnt"
     },
