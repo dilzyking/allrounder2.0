@@ -136,6 +136,7 @@
             text-align: center;
             padding: 60px 20px;
             color: #7a8faf;
+            grid-column: 1 / -1;
         }
 
         .loading i {
@@ -147,7 +148,7 @@
         /* Match Grid */
         .match-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
             gap: 25px;
         }
 
@@ -246,28 +247,42 @@
             margin-right: 4px;
         }
 
-        /* Stream URL sections */
+        /* Stream sections */
         .stream-section {
             background: #0a111f;
             border-radius: 14px;
             padding: 12px 14px;
-            margin-top: 8px;
+            margin-top: 10px;
             border: 1px solid #1f2f48;
         }
 
-        .stream-section .label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #6a7f9f;
-            margin-bottom: 6px;
+        .stream-section .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #1a2a42;
         }
 
-        .stream-section .label span {
-            font-weight: 600;
+        .stream-section .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8fa3c4;
+        }
+
+        .stream-section .section-title i {
+            margin-right: 6px;
+        }
+
+        .stream-section .section-title.alpha {
+            color: #5fcb7a;
+        }
+
+        .stream-section .section-title.bravo {
+            color: #f5a342;
         }
 
         .url-item {
@@ -275,13 +290,29 @@
             align-items: center;
             background: #060b15;
             border-radius: 30px;
-            padding: 4px 4px 4px 14px;
+            padding: 5px 5px 5px 14px;
             margin-bottom: 5px;
             border: 1px solid #1a2a42;
+            transition: all 0.2s;
         }
 
         .url-item:last-child {
             margin-bottom: 0;
+        }
+
+        .url-item:hover {
+            border-color: #2f4a6a;
+        }
+
+        .url-item .server-name {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #8fa3c4;
+            min-width: 90px;
+            max-width: 90px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .url-item .url-text {
@@ -292,22 +323,23 @@
             text-overflow: ellipsis;
             flex: 1;
             font-family: 'Courier New', monospace;
+            margin: 0 8px;
         }
 
         .url-item .copy-btn {
             background: #1f2f48;
             border: none;
             color: #d3e0fa;
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .url-item .copy-btn:hover {
@@ -320,13 +352,42 @@
             background: #2a6b3a;
         }
 
+        /* DRM section */
+        .drm-section {
+            background: #0a111f;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-top: 10px;
+            border: 1px solid #1f2f48;
+        }
+
+        .drm-section .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #1a2a42;
+        }
+
+        .drm-section .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #f5426f;
+        }
+
+        .drm-section .section-title i {
+            margin-right: 6px;
+        }
+
         .drm-item {
             display: flex;
             align-items: center;
             background: #060b15;
             border-radius: 30px;
-            padding: 4px 4px 4px 14px;
-            margin-top: 6px;
+            padding: 5px 5px 5px 14px;
             border: 1px solid #1a2a42;
         }
 
@@ -344,16 +405,16 @@
             background: #1f2f48;
             border: none;
             color: #d3e0fa;
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .drm-item .copy-btn:hover {
@@ -364,7 +425,7 @@
         .no-stream {
             color: #5a6f8f;
             font-size: 0.8rem;
-            padding: 6px 0;
+            padding: 8px 0;
             text-align: center;
         }
 
@@ -415,6 +476,7 @@
             text-align: center;
             padding: 40px 20px;
             color: #f5a342;
+            grid-column: 1 / -1;
         }
 
         .error-msg i {
@@ -438,7 +500,7 @@
             background: #2f4a6a;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -453,11 +515,46 @@
             .url-item {
                 flex-wrap: wrap;
                 padding: 6px;
+                gap: 4px;
+            }
+            .url-item .server-name {
+                min-width: 100%;
+                max-width: 100%;
+                font-size: 0.6rem;
             }
             .url-item .url-text {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
                 width: 100%;
-                margin-bottom: 4px;
+                margin: 4px 0;
+            }
+            .url-item .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .drm-item {
+                flex-wrap: wrap;
+                padding: 6px;
+                gap: 4px;
+            }
+            .drm-item .drm-key {
+                font-size: 0.6rem;
+                width: 100%;
+            }
+            .drm-item .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-left h1 {
+                font-size: 1.2rem;
+            }
+            .header-right {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -524,7 +621,7 @@
         }
 
         function copyToClipboard(text, button) {
-            if (!text) {
+            if (!text || text.trim() === '') {
                 showToast('⚠️ Nothing to copy');
                 return;
             }
@@ -549,15 +646,47 @@
             });
         }
 
-        function createStreamItem(label, url, type = 'url') {
-            if (!url) return '';
-            const id = `copy-${type}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+        function createUrlItem(serverName, url) {
+            if (!url || url.trim() === '') return '';
+            // Clean up server name - remove "Server" suffix if present for cleaner display
+            let displayName = serverName;
+            if (displayName.includes('Server')) {
+                displayName = displayName.replace(' Server', '');
+            }
+            // Escape special characters for onclick attribute
+            const escapedUrl = url.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
             return `
                 <div class="url-item">
-                    <span class="url-text">${url}</span>
-                    <button class="copy-btn" onclick="copyToClipboard('${url}', this)">
+                    <span class="server-name"><i class="fas fa-server"></i> ${displayName}</span>
+                    <span class="url-text" title="${url}">${url}</span>
+                    <button class="copy-btn" onclick="copyToClipboard('${escapedUrl}', this)">
                         <i class="fas fa-copy"></i> Copy
                     </button>
+                </div>
+            `;
+        }
+
+        function renderStreamSection(title, icon, urls, className) {
+            if (!urls || typeof urls !== 'object') return '';
+            
+            // Filter out empty values
+            const validUrls = Object.entries(urls)
+                .filter(([key, val]) => val && val.trim() !== '')
+                .map(([key, val]) => ({ name: key, url: val }));
+            
+            if (validUrls.length === 0) return '';
+
+            let itemsHtml = validUrls.map(item => createUrlItem(item.name, item.url)).join('');
+
+            return `
+                <div class="stream-section">
+                    <div class="section-header">
+                        <span class="section-title ${className}">
+                            <i class="${icon}"></i> ${title}
+                        </span>
+                        <span style="font-size:0.6rem;color:#4a5f7f;">${validUrls.length} servers</span>
+                    </div>
+                    ${itemsHtml}
                 </div>
             `;
         }
@@ -567,58 +696,42 @@
             const statusClass = isLive ? 'live' : 'upcoming';
             const statusIcon = isLive ? 'fa-circle' : 'fa-clock';
 
-            // Build stream URLs section
-            let streamsHtml = '';
-            let hasStreams = false;
-
-            if (match.stream_url_alpha && typeof match.stream_url_alpha === 'object') {
-                const urls = match.stream_url_alpha;
-                // Filter out empty values
-                const validUrls = Object.entries(urls).filter(([key, val]) => val && val.trim() !== '');
-                if (validUrls.length > 0) {
-                    hasStreams = true;
-                    streamsHtml += `
-                        <div class="stream-section">
-                            <div class="label">
-                                <span>📡 ALPHA STREAMS</span>
-                            </div>
-                    `;
-                    validUrls.forEach(([key, val]) => {
-                        streamsHtml += createStreamItem(key, val, 'alpha');
-                    });
-                    streamsHtml += `</div>`;
-                }
+            // Render Alpha streams
+            let alphaHtml = '';
+            if (match.stream_url_alpha) {
+                alphaHtml = renderStreamSection(
+                    'Alpha Streams', 
+                    'fa-broadcast', 
+                    match.stream_url_alpha,
+                    'alpha'
+                );
             }
 
-            if (match.stream_url_bravo && typeof match.stream_url_bravo === 'object') {
-                const urls = match.stream_url_bravo;
-                const validUrls = Object.entries(urls).filter(([key, val]) => val && val.trim() !== '');
-                if (validUrls.length > 0) {
-                    hasStreams = true;
-                    streamsHtml += `
-                        <div class="stream-section">
-                            <div class="label">
-                                <span>📡 BRAVO STREAMS</span>
-                            </div>
-                    `;
-                    validUrls.forEach(([key, val]) => {
-                        streamsHtml += createStreamItem(key, val, 'bravo');
-                    });
-                    streamsHtml += `</div>`;
-                }
+            // Render Bravo streams
+            let bravoHtml = '';
+            if (match.stream_url_bravo) {
+                bravoHtml = renderStreamSection(
+                    'Bravo Streams', 
+                    'fa-broadcast', 
+                    match.stream_url_bravo,
+                    'bravo'
+                );
             }
 
-            // DRM key
+            // Render DRM key
             let drmHtml = '';
             if (match.drm_key && match.drm_key.trim() !== '') {
+                const escapedKey = match.drm_key.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 drmHtml = `
-                    <div class="stream-section">
-                        <div class="label">
-                            <span>🔑 DRM KEY</span>
+                    <div class="drm-section">
+                        <div class="section-header">
+                            <span class="section-title">
+                                <i class="fas fa-key"></i> DRM Key
+                            </span>
                         </div>
                         <div class="drm-item">
-                            <span class="drm-key">${match.drm_key}</span>
-                            <button class="copy-btn" onclick="copyToClipboard('${match.drm_key}', this)">
+                            <span class="drm-key" title="${match.drm_key}">${match.drm_key}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${escapedKey}', this)">
                                 <i class="fas fa-copy"></i> Copy
                             </button>
                         </div>
@@ -627,8 +740,9 @@
             }
 
             // If no streams and no DRM
-            if (!hasStreams && !drmHtml) {
-                streamsHtml = `
+            const hasContent = alphaHtml || bravoHtml || drmHtml;
+            if (!hasContent) {
+                alphaHtml = `
                     <div class="no-stream">
                         <i class="fas fa-clock"></i> Stream URL & DRM key will be available soon
                     </div>
@@ -659,7 +773,8 @@
                                 <i class="fas fa-hashtag"></i> ${match.match_id || 'N/A'}
                             </span>
                         </div>
-                        ${streamsHtml}
+                        ${alphaHtml}
+                        ${bravoHtml}
                         ${drmHtml}
                     </div>
                 </div>
@@ -671,7 +786,7 @@
 
             try {
                 grid.innerHTML = `
-                    <div class="loading" style="grid-column:1/-1;">
+                    <div class="loading">
                         <i class="fas fa-spinner fa-pulse"></i>
                         <p>Fetching match data...</p>
                     </div>
@@ -702,7 +817,7 @@
                     grid.innerHTML = cardsHtml;
                 } else {
                     grid.innerHTML = `
-                        <div class="error-msg" style="grid-column:1/-1;">
+                        <div class="error-msg">
                             <i class="fas fa-info-circle"></i>
                             <p>No matches found</p>
                         </div>
@@ -712,7 +827,7 @@
             } catch (error) {
                 console.error('Error fetching matches:', error);
                 grid.innerHTML = `
-                    <div class="error-msg" style="grid-column:1/-1;">
+                    <div class="error-msg">
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>Failed to load matches</p>
                         <p style="font-size:0.85rem;color:#6a7f9f;margin-top:8px;">${error.message}</p>
