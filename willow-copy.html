@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willow Cricket - Live Streams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: #0a0e17;
+            color: #e8edf5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #141c2b, #1a2538);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 25px;
+            border: 1px solid #2a3a55;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left i {
+            font-size: 2.2rem;
+            color: #f5c842;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f5e56b, #f5a342);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+
+        .header-right .badge {
+            background: #1e2a40;
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 1px solid #2f405f;
+        }
+
+        .header-right .badge i {
+            color: #5fcb7a;
+            margin-right: 6px;
+        }
+
+        .header-right .telegram a {
+            color: #58a9ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .header-right .telegram a:hover {
+            color: #89c0ff;
+            text-decoration: underline;
+        }
+
+        .header-right .owner {
+            color: #9aafcf;
+            background: #111c2e;
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 1px solid #2a3a55;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: #111c2e;
+            padding: 12px 25px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            border: 1px solid #2a3a55;
+            width: fit-content;
+        }
+
+        .stats-row span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .stats-row .live {
+            color: #5fcb7a;
+        }
+
+        .stats-row .upcoming {
+            color: #f2b86c;
+        }
+
+        .stats-row .live i {
+            color: #5fcb7a;
+            font-size: 0.6rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7a8faf;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #f5c842;
+        }
+
+        /* Match Grid */
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        .match-card {
+            background: #111c2e;
+            border-radius: 20px;
+            border: 1px solid #1f2f48;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .match-card:hover {
+            border-color: #3f5a80;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            background-color: #1a2538;
+        }
+
+        .card-image .status-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 4px 16px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.live {
+            background: #1d4a2a;
+            border: 1px solid #40b86b;
+            color: #b3f0cb;
+        }
+
+        .status-badge.upcoming {
+            background: #3f341a;
+            border: 1px solid #d6a042;
+            color: #f7d894;
+        }
+
+        .card-body {
+            padding: 18px 20px 20px;
+        }
+
+        .match-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #f0f5ff;
+            line-height: 1.4;
+        }
+
+        .match-synopsis {
+            font-size: 0.85rem;
+            color: #8fa3c4;
+            margin-bottom: 8px;
+        }
+
+        .match-time {
+            display: inline-block;
+            background: #1a2538;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: #c5d4ed;
+            margin: 6px 0 12px;
+        }
+
+        .match-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .free-badge {
+            background: #1e2a40;
+            padding: 3px 14px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            color: #a0b5d5;
+        }
+
+        .free-badge i {
+            margin-right: 4px;
+        }
+
+        /* Stream URL sections */
+        .stream-section {
+            background: #0a111f;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-top: 8px;
+            border: 1px solid #1f2f48;
+        }
+
+        .stream-section .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6a7f9f;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stream-section .label span {
+            font-weight: 600;
+        }
+
+        .url-item {
+            display: flex;
+            align-items: center;
+            background: #060b15;
+            border-radius: 30px;
+            padding: 4px 4px 4px 14px;
+            margin-bottom: 5px;
+            border: 1px solid #1a2a42;
+        }
+
+        .url-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .url-item .url-text {
+            font-size: 0.7rem;
+            color: #b0c4e5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            font-family: 'Courier New', monospace;
+        }
+
+        .url-item .copy-btn {
+            background: #1f2f48;
+            border: none;
+            color: #d3e0fa;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .url-item .copy-btn:hover {
+            background: #3f5a80;
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .url-item .copy-btn.copied {
+            background: #2a6b3a;
+        }
+
+        .drm-item {
+            display: flex;
+            align-items: center;
+            background: #060b15;
+            border-radius: 30px;
+            padding: 4px 4px 4px 14px;
+            margin-top: 6px;
+            border: 1px solid #1a2a42;
+        }
+
+        .drm-item .drm-key {
+            font-size: 0.7rem;
+            color: #b0c4e5;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .drm-item .copy-btn {
+            background: #1f2f48;
+            border: none;
+            color: #d3e0fa;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .drm-item .copy-btn:hover {
+            background: #3f5a80;
+            color: white;
+        }
+
+        .no-stream {
+            color: #5a6f8f;
+            font-size: 0.8rem;
+            padding: 6px 0;
+            text-align: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #4a5f7f;
+            font-size: 0.85rem;
+            border-top: 1px solid #1a2a42;
+            padding-top: 25px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2f48;
+            color: #e8edf5;
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 1px solid #3f5a80;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .error-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #f5a342;
+        }
+
+        .error-msg i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .retry-btn {
+            background: #1f2f48;
+            border: 1px solid #3f5a80;
+            color: #e8edf5;
+            padding: 10px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #2f4a6a;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-row {
+                width: 100%;
+                justify-content: center;
+            }
+            .url-item {
+                flex-wrap: wrap;
+                padding: 6px;
+            }
+            .url-item .url-text {
+                font-size: 0.65rem;
+                width: 100%;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <i class="fas fa-cricket"></i>
+                <h1>Willow Cricket</h1>
+            </div>
+            <div class="header-right">
+                <div class="badge">
+                    <i class="fas fa-sync-alt fa-fw"></i>
+                    <span id="lastUpdate">Loading...</span>
+                </div>
+                <div class="telegram">
+                    <i class="fab fa-telegram-plane"></i>
+                    <a href="https://t.me/livesportsplay" target="_blank">@livesportsplay</a>
+                </div>
+                <div class="owner">
+                    <i class="fas fa-user-circle"></i> Md Sohanur Rahman Hady
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <span class="live"><i class="fas fa-circle"></i> LIVE <span id="liveCount">0</span></span>
+            <span class="upcoming"><i class="fas fa-clock"></i> UPCOMING <span id="upcomingCount">0</span></span>
+        </div>
+
+        <!-- Match Grid -->
+        <div id="matchGrid" class="match-grid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-pulse"></i>
+                <p>Loading matches...</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <i class="fas fa-copy"></i> Click copy buttons to copy stream URLs or DRM keys
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">✅ Copied!</div>
+
+    <script>
+        // API endpoint
+        const API_URL = 'https://willow-api.sayanwork-studioo.workers.dev';
+
+        let toastTimeout;
+
+        function showToast(message = '✅ Copied!') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function copyToClipboard(text, button) {
+            if (!text) {
+                showToast('⚠️ Nothing to copy');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('copied');
+                showToast('✅ Copied to clipboard!');
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('✅ Copied!');
+            });
+        }
+
+        function createStreamItem(label, url, type = 'url') {
+            if (!url) return '';
+            const id = `copy-${type}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+            return `
+                <div class="url-item">
+                    <span class="url-text">${url}</span>
+                    <button class="copy-btn" onclick="copyToClipboard('${url}', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderMatchCard(match) {
+            const isLive = match.status === 'LIVE';
+            const statusClass = isLive ? 'live' : 'upcoming';
+            const statusIcon = isLive ? 'fa-circle' : 'fa-clock';
+
+            // Build stream URLs section
+            let streamsHtml = '';
+            let hasStreams = false;
+
+            if (match.stream_url_alpha && typeof match.stream_url_alpha === 'object') {
+                const urls = match.stream_url_alpha;
+                // Filter out empty values
+                const validUrls = Object.entries(urls).filter(([key, val]) => val && val.trim() !== '');
+                if (validUrls.length > 0) {
+                    hasStreams = true;
+                    streamsHtml += `
+                        <div class="stream-section">
+                            <div class="label">
+                                <span>📡 ALPHA STREAMS</span>
+                            </div>
+                    `;
+                    validUrls.forEach(([key, val]) => {
+                        streamsHtml += createStreamItem(key, val, 'alpha');
+                    });
+                    streamsHtml += `</div>`;
+                }
+            }
+
+            if (match.stream_url_bravo && typeof match.stream_url_bravo === 'object') {
+                const urls = match.stream_url_bravo;
+                const validUrls = Object.entries(urls).filter(([key, val]) => val && val.trim() !== '');
+                if (validUrls.length > 0) {
+                    hasStreams = true;
+                    streamsHtml += `
+                        <div class="stream-section">
+                            <div class="label">
+                                <span>📡 BRAVO STREAMS</span>
+                            </div>
+                    `;
+                    validUrls.forEach(([key, val]) => {
+                        streamsHtml += createStreamItem(key, val, 'bravo');
+                    });
+                    streamsHtml += `</div>`;
+                }
+            }
+
+            // DRM key
+            let drmHtml = '';
+            if (match.drm_key && match.drm_key.trim() !== '') {
+                drmHtml = `
+                    <div class="stream-section">
+                        <div class="label">
+                            <span>🔑 DRM KEY</span>
+                        </div>
+                        <div class="drm-item">
+                            <span class="drm-key">${match.drm_key}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${match.drm_key}', this)">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // If no streams and no DRM
+            if (!hasStreams && !drmHtml) {
+                streamsHtml = `
+                    <div class="no-stream">
+                        <i class="fas fa-clock"></i> Stream URL & DRM key will be available soon
+                    </div>
+                `;
+            }
+
+            const coverImage = match.cover_image || 'https://via.placeholder.com/400x160/1a2538/3f5a80?text=Willow+Cricket';
+
+            return `
+                <div class="match-card">
+                    <div class="card-image" style="background-image: url('${coverImage}');">
+                        <span class="status-badge ${statusClass}">
+                            <i class="fas ${statusIcon}"></i> ${match.status}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="match-title">${match.title || 'Untitled Match'}</div>
+                        <div class="match-synopsis">${match.synopsis || ''}</div>
+                        <div class="match-time">
+                            <i class="far fa-clock"></i> ${match.time || 'TBD'}
+                        </div>
+                        <div class="match-meta">
+                            <span class="free-badge">
+                                <i class="fas ${match.is_free ? 'fa-check-circle' : 'fa-lock'}"></i>
+                                ${match.is_free ? 'Free' : 'Premium'}
+                            </span>
+                            <span style="font-size:0.7rem;color:#5a6f8f;">
+                                <i class="fas fa-hashtag"></i> ${match.match_id || 'N/A'}
+                            </span>
+                        </div>
+                        ${streamsHtml}
+                        ${drmHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function fetchMatches() {
+            const grid = document.getElementById('matchGrid');
+
+            try {
+                grid.innerHTML = `
+                    <div class="loading" style="grid-column:1/-1;">
+                        <i class="fas fa-spinner fa-pulse"></i>
+                        <p>Fetching match data...</p>
+                    </div>
+                `;
+
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Update header info
+                if (data.HeaderInfo) {
+                    document.getElementById('lastUpdate').textContent = data.HeaderInfo.LastUpdate || 'N/A';
+                }
+
+                // Update stats
+                if (data.Stats) {
+                    document.getElementById('liveCount').textContent = data.Stats.LiveCount || 0;
+                    document.getElementById('upcomingCount').textContent = data.Stats.UpcomingCount || 0;
+                }
+
+                // Render matches
+                if (data.Matches && Array.isArray(data.Matches) && data.Matches.length > 0) {
+                    const cardsHtml = data.Matches.map(match => renderMatchCard(match)).join('');
+                    grid.innerHTML = cardsHtml;
+                } else {
+                    grid.innerHTML = `
+                        <div class="error-msg" style="grid-column:1/-1;">
+                            <i class="fas fa-info-circle"></i>
+                            <p>No matches found</p>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error fetching matches:', error);
+                grid.innerHTML = `
+                    <div class="error-msg" style="grid-column:1/-1;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load matches</p>
+                        <p style="font-size:0.85rem;color:#6a7f9f;margin-top:8px;">${error.message}</p>
+                        <button class="retry-btn" onclick="fetchMatches()">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-refresh every 60 seconds
+        let refreshInterval;
+
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(fetchMatches, 60000);
+        }
+
+        // Initial fetch
+        fetchMatches();
+        startAutoRefresh();
+
+        // Expose functions to global scope for onclick
+        window.copyToClipboard = copyToClipboard;
+        window.fetchMatches = fetchMatches;
+    </script>
+</body>
+</html>
