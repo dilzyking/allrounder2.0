@@ -1,140 +1,432 @@
- 
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>FIFA WORLD CUP 2026</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FIFA WORLD CUP 2026</title>
+  <!-- Shaka Player v4.16.2 (latest stable with modern UI) -->
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css" crossorigin="anonymous">
+  
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-FMP9REY96D');
-</script>
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
-
- 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-FMP9REY96D');
+  </script>
   
-  <body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg"></video>  
-  </div>  
-  
-  <script>  
-    document.addEventListener('DOMContentLoaded', async () => {  
-      shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
-        console.error('Browser not supported');  
-        return;  
-      }  
-  
-      const video = document.querySelector('video');  
-      const player = new shaka.Player();  
-      await player.attach(video);  
-  
-      const container = document.querySelector('.shaka-video-container');  
-      const ui = new shaka.ui.Overlay(player, container, video);  
-  
-      ui.configure({  
-        controlPanelElements: [  
-          'play_pause', 'time_and_duration', 'mute', 'volume',  
-          'spacer', 'language', 'captions', 'picture_in_picture',  
-          'quality', 'fullscreen'  
-        ],  
-        volumeBarColors: {  
-  base: 'rgba(0, 136, 255, 0.3)',  
-  level: 'rgb(0, 136, 255)'  
-},  
-seekBarColors: {
-  base: 'rgba(90, 0, 0, 0.3)',
-  buffered: 'rgba(120, 0, 0, 0.6)',
-  played: 'rgb(170, 0, 0)'
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: #0a0a0a;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    .shaka-video-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      object-fit: contain;
+    }
+    /* hide spinner / loading animation (clean start) */
+    .shaka-spinner-container,
+    .shaka-spinner,
+    .shaka-spinner-svg {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    /* ---- custom modern UI overrides (like the upgraded theme) ---- */
+   .shaka-controls-container {
+  background: transparent !important;
 }
-      });  
+    .shaka-controls-container button {
+      color: #ffffff !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .shaka-controls-container button:hover {
+      color: #38bdf8 !important;
+      filter: drop-shadow(0 0 8px rgba(56,189,248,0.3));
+    }
+    /* seek bar: dark base, red buffered, red played (like the reference) */
+    .shaka-seek-bar .shaka-seek-bar-background {
+      background: rgba(90, 0, 0, 0.5) !important;
+    }
+    .shaka-seek-bar .shaka-seek-bar-buffered {
+      background: rgba(180, 20, 20, 0.7) !important;
+    }
+    .shaka-seek-bar .shaka-seek-bar-played {
+      background: rgb(200, 10, 10) !important;
+    }
+    /* volume bar: blue theme */
+    .shaka-volume-bar .shaka-volume-bar-background {
+      background: rgba(0, 136, 255, 0.25) !important;
+    }
+    .shaka-volume-bar .shaka-volume-bar-level {
+      background: rgb(0, 136, 255) !important;
+    }
+    /* custom fit button styling (from the upgraded design) */
+    .sp-fit-btn {
+      background: transparent !important;
+      border: none !important;
+      cursor: pointer !important;
+      padding: 0 7px !important;
+      min-width: auto !important;
+      opacity: 0.8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      transition: opacity 0.15s, transform 0.1s;
+      color: #fff !important;
+    }
+    .sp-fit-btn:hover { opacity: 1; }
+    .sp-fit-btn:active { transform: scale(0.92); }
+    .fit-pill {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      line-height: 1;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.85);
+      pointer-events: none;
+      white-space: nowrap;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .sp-fit-btn:hover .fit-pill {
+      border-color: rgba(255,255,255,0.6);
+      color: #fff;
+    }
+    .sp-fit-btn.mode-fill .fit-pill {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+    .sp-fit-btn.mode-cover .fit-pill {
+      border-color: #a78bfa;
+      color: #a78bfa;
+    }
+    /* top-right status badge (modern, subtle) */
+    #status-badge {
+      position: fixed;
+      top: max(16px, env(safe-area-inset-top));
+      right: 16px;
+      z-index: 9997;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px 5px 10px;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: #c0c0c0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(-6px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    #status-badge.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: inline-block;
+      background: #60a5fa;
+    }
+    #status-badge.live .badge-dot {
+      background: #22d3a0;
+      animation: dot-pulse 2s ease-in-out infinite;
+    }
+    #status-badge.warn .badge-dot {
+      background: #fb923c;
+      animation: dot-pulse 1s ease-in-out infinite;
+    }
+    #status-badge.err .badge-dot {
+      background: #f87171;
+    }
+    @keyframes dot-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.6); }
+    }
+    /* responsive adjustments */
+    @media (max-width: 420px) {
+      .fit-pill { font-size: 9px; padding: 2px 5px; }
+      #status-badge { font-size: 10px; padding: 4px 10px 4px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- player container -->
+  <div class="shaka-video-container" id="player-container">
+    <video autoplay playsinline preload="metadata"
+           poster="https://d2779tscntxxsw.cloudfront.net/collection_697406b993cda.png">
+    </video>
+  </div>
+
+  <!-- status badge (upgraded UI) -->
+  <div id="status-badge">
+    <span class="badge-dot"></span>
+    <span id="status-text">Live</span>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // ----- CONFIG (original stream + keys) -----
+      const DRM_CONFIG = {
+        clearKeys: {
+          "9d4ccbb6df9c984e1b8f29a7d8872643": "db4f102d7b730b9dac2450c50eb4bd6b"
+        }
+      };
+      const STREAM_URL = "https://a96aivottlinear-a.akamaihd.net/OTTB/iad-nitro/live/clients/dash/enc/gbcn3a1nym/out/v1/273e7a901d7a4e09bf6a1f0d307e3840/cenc.mpd";
+
+      // ----- DOM refs -----
+      const container = document.getElementById('player-container');
+      const video = container.querySelector('video');
+      const statusEl = document.getElementById('status-badge');
+      const statusText = document.getElementById('status-text');
+
+      let statusTimer = null;
+
+      function setStatus(msg, type, dur) {
+        if (!statusEl) return;
+        statusText.textContent = msg || 'Live';
+        statusEl.className = 'show ' + (type || 'live');
+        if (statusTimer) { clearTimeout(statusTimer); statusTimer = null; }
+        if (dur !== 0) {
+          statusTimer = setTimeout(() => {
+            statusEl.className = statusEl.className.replace('show', '').trim();
+            statusTimer = null;
+          }, dur || 4000);
+        }
+      }
+
+      // ----- inject fit button (modern UI) -----
+      function injectFitButton(containerEl, videoEl) {
+        const panel = containerEl.querySelector('.shaka-controls-button-panel');
+        if (!panel) return false;
+
+        const anchor = panel.querySelector('.shaka-fullscreen-button');
+        const FITS = ['contain', 'fill', 'cover'];
+        const FIT_LABELS = { contain: 'Fit', fill: 'Fill', cover: 'Zoom' };
+        let fitIdx = 0;
+
+        const fitBtn = document.createElement('button');
+        fitBtn.className = 'sp-fit-btn';
+        fitBtn.title = 'Video Fit: ' + FIT_LABELS.contain;
+        fitBtn.setAttribute('aria-label', 'Cycle Video Fit Mode');
+        fitBtn.innerHTML = '<span class="fit-pill">—</span>';
+
+        if (anchor) panel.insertBefore(fitBtn, anchor);
+        else panel.appendChild(fitBtn);
+
+        let currentRatio = '—';
+
+        function applyFit(i) {
+          fitIdx = i;
+          const m = FITS[i];
+          videoEl.classList.remove('mode-fill', 'mode-cover');
+          if (m === 'fill') videoEl.classList.add('mode-fill');
+          if (m === 'cover') videoEl.classList.add('mode-cover');
+          fitBtn.classList.remove('mode-fill', 'mode-cover');
+          if (m !== 'contain') fitBtn.classList.add('mode-' + m);
+          fitBtn.title = 'Video Fit: ' + FIT_LABELS[m];
+          const pill = fitBtn.querySelector('.fit-pill');
+          if (pill) pill.textContent = (m === 'contain') ? currentRatio : FIT_LABELS[m];
+        }
+
+        fitBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          applyFit((fitIdx + 1) % FITS.length);
+        });
+
+        ['fullscreenchange', 'webkitfullscreenchange'].forEach(function(ev) {
+          document.addEventListener(ev, function() {
+            if (!(document.fullscreenElement || document.webkitFullscreenElement)) {
+              applyFit(0);
+            }
+          });
+        });
+
+        function ratioLabel(w, h) {
+          if (!w || !h) return '—';
+          function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+          const g = gcd(w, h) || 1, rw = w/g, rh = h/g;
+          const named = { '16:9': 16/9, '4:3': 4/3, '21:9': 21/9, '1:1': 1, '9:16': 9/16, '3:2': 3/2, '5:4': 5/4, '2:1': 2 };
+          const real = w/h;
+          let best = null, bestD = 0.02;
+          Object.keys(named).forEach(function(k) {
+            const d = Math.abs(named[k] - real);
+            if (d < bestD) { bestD = d; best = k; }
+          });
+          if (best) return best;
+          if (rw <= 40 && rh <= 40) return rw + ':' + rh;
+          return real.toFixed(2) + ':1';
+        }
+
+        let ratioTries = 0;
+        function updateRatio() {
+          const pill = fitBtn.querySelector('.fit-pill');
+          if (!pill) return;
+          if (videoEl.videoWidth > 0) {
+            currentRatio = ratioLabel(videoEl.videoWidth, videoEl.videoHeight);
+            if (FITS[fitIdx] === 'contain') pill.textContent = currentRatio;
+            ratioTries = 0;
+          } else if (ratioTries < 15) {
+            ratioTries++;
+            setTimeout(updateRatio, 700);
+          }
+        }
+
+        videoEl.addEventListener('loadedmetadata', function() { ratioTries = 0; updateRatio(); });
+        videoEl.addEventListener('resize', updateRatio);
+        videoEl.addEventListener('timeupdate', function onFirstFrame() {
+          videoEl.removeEventListener('timeupdate', onFirstFrame);
+          updateRatio();
+        });
+        updateRatio();
+
+        return true;
+      }
+
+      // ----- main player init (upgraded UI) -----
+      document.addEventListener('DOMContentLoaded', async () => {
+        shaka.polyfill.installAll();
+
+        if (!shaka.Player.isBrowserSupported()) {
+          setStatus('Browser not supported', 'err', 0);
+          return;
+        }
+
+        const player = new shaka.Player();
+        await player.attach(video);
+
+        // --- UI overlay (modern) ---
+        const ui = new shaka.ui.Overlay(player, container, video);
+        ui.configure({
+          addBigPlayButton: true,
+          controlPanelElements: [
+            'play_pause',
+            'time_and_duration',
+            'mute',
+            'volume',
+            'spacer',
+            'quality',
+            'language',
+            'captions',
+            'picture_in_picture',
+            'fullscreen'
+          ],
+          // keep the original seek/volume color config (applied via CSS as well)
+          volumeBarColors: {
+            base: 'rgba(0, 136, 255, 0.3)',
+            level: 'rgb(0, 136, 255)'
+          },
+          seekBarColors: {
+        base: "#828282",
+        buffered: "#ffc336",
+        played: "#1fc7ff"
+      }
+    });
+
+
+        // inject fit button (upgraded UI)
+        let injectCount = 0;
+        (function tryInject() {
+          if (injectFitButton(container, video)) return;
+          if (++injectCount < 6) setTimeout(tryInject, 150);
+        })();
+
+        // --- player config (from original + improvements) ---
+        player.configure({
+          drm: DRM_CONFIG,
+          streaming: {
+            lowLatencyMode: true,
+            bufferingGoal: 15,
+            rebufferingGoal: 2,
+            bufferBehind: 15,
+            retryParameters: {
+              timeout: 10000,
+              maxAttempts: 5,
+              baseDelay: 300,
+              backoffFactor: 1.2
+            },
+            segmentRequestTimeout: 8000,
+            segmentPrefetchLimit: 2,
+            useNativeHlsOnSafari: true
+          },
+          manifest: {
+            retryParameters: {
+              timeout: 8000,
+              maxAttempts: 3
+            }
+          }
+        });
+
+        // --- error handling ---
+        player.addEventListener('error', (event) => {
+          const err = event.detail;
+          console.error('Shaka Error:', err);
+          setStatus('Stream error: ' + (err.code || ''), 'err', 5000);
+        });
+
+        // --- load stream ---
+        try {
+          setStatus('Loading…', 'warn', 0);
+          await player.load(STREAM_URL);
+          setStatus('Live', 'live', 4000);
+          // auto-play
+          video.play().catch(() => {});
+        } catch (error) {
+          console.error('Load error:', error);
+          setStatus('Failed to load stream', 'err', 0);
+        }
+
+        // auto unmute on user interaction (better UX)
+        function unmuteOnce() {
+          video.muted = false;
+        }
+        container.addEventListener('pointerdown', unmuteOnce, { capture: true, once: true });
+        container.addEventListener('click', unmuteOnce, { capture: true, once: true });
+        video.addEventListener('play', () => { video.muted = false; });
+
+        // visibility change: resume if paused
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden && video.paused) {
+            video.play().catch(() => {});
+          }
+        });
+      });
+
+    })();
+  </script>
   
-   
-      let drmConfig = {  
-        clearKeys: {  
-          "1b3104b62743843561a440babd015d34":
- "c4401f6ccc1d262a1fbcf5b449dbc2e1"  
-        }  
-      };  
-  
-      let streamUrl = "https://a96aivottlinear-a.akamaihd.net/OTTB/pdx-nitro/live/clients/dash/enc/4s0wwwegjd/out/v1/4bfbc194e61d4c5eb9cc29843938d018/cenc.mpd";  
-  
-      player.configure({  
-        drm: drmConfig,  
-        streaming: {  
-          lowLatencyMode: true,  
-          bufferingGoal: 15,  
-          rebufferingGoal: 2,  
-          bufferBehind: 15,  
-          retryParameters: {  
-            timeout: 10000,  
-            maxAttempts: 5,  
-            baseDelay: 300,  
-            backoffFactor: 1.2  
-          },  
-          segmentRequestTimeout: 8000,  
-          segmentPrefetchLimit: 2,  
-          useNativeHlsOnSafari: true  
-        },  
-        manifest: {  
-          retryParameters: {  
-            timeout: 8000,  
-            maxAttempts: 3  
-          }  
-        }  
-      });  
-  
-      player.addEventListener('error', (event) => {  
-        console.error('Shaka Player Error:', event.detail);  
-      });  
-  
-      try {  
-        await player.load(streamUrl);  
-        console.log("Stream loaded successfully");  
-      } catch (error) {  
-        console.error('Load error:', error);  
-      }  
-    });  
-  </script>  
-  </body>  
+  <!-- ad/tracking (kept as in original) -->
   <script>(function(s){s.dataset.zone='10603308',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-  
+</body>
 </html>
