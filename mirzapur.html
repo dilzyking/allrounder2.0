@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+    
+    #player-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      position: relative;
+    }
+    
+    #player-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .plyr {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .plyr__video-wrapper {
+      height: 100%;
+    }
+    
+    .plyr__video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Loader Styles */
+    #loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      z-index: 10;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid #00aaff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .loader-text {
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      margin-top: 20px;
+      opacity: 0.7;
+      letter-spacing: 1px;
+    }
+
+    .loading-progress {
+      width: 200px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00aaff, #00ff88);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Error message */
+    #error-message {
+      display: none;
+      color: #ff4444;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      margin-top: 15px;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    #error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="player-container">
+    <!-- Loader -->
+    <div id="loader">
+      <div class="spinner"></div>
+      <div class="loader-text">Loading video...</div>
+      <div class="loading-progress">
+        <div class="loading-progress-bar" id="progress-bar"></div>
+      </div>
+      <div id="error-message">Failed to load video. Please try again.</div>
+    </div>
+
+    <!-- Video Player -->
+    <video id="player" playsinline controls>
+      <source src="https://ddstreamnew-0432d5f05418.herokuapp.com/download?path=6a9ab6516e86503592cb7794" type="video/mp4" />
+    </video>
+  </div>
+
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loader = document.getElementById('loader');
+      const progressBar = document.getElementById('progress-bar');
+      const errorMessage = document.getElementById('error-message');
+      let loaderHidden = false;
+
+      // Initialize Plyr
+      const player = new Plyr('#player', {
+        controls: [
+          'play-large',
+          'play',
+          'progress',
+          'current-time',
+          'mute',
+          'volume',
+          'captions',
+          'settings',
+          'pip',
+          'airplay',
+          'fullscreen'
+        ],
+        settings: ['captions', 'quality', 'speed'],
+        speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] },
+        autoplay: false,
+        muted: false,
+        hideControls: false
+      });
+
+      // Function to hide loader
+      function hideLoader() {
+        if (!loaderHidden) {
+          loaderHidden = true;
+          loader.classList.add('hidden');
+          // Remove loader from DOM after transition
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500);
+        }
+      }
+
+      // Update progress bar during loading
+      function updateProgress(progress) {
+        const percent = Math.min(progress * 100, 100);
+        progressBar.style.width = percent + '%';
+        if (percent >= 100) {
+          // Video is fully loaded, but we'll wait for 'canplay' to hide loader
+        }
+      }
+
+      // Track loading progress
+      let lastProgress = 0;
+      player.on('progress', function() {
+        try {
+          const video = player.media;
+          if (video.buffered.length > 0) {
+            const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+            const duration = video.duration;
+            if (duration > 0) {
+              const progress = bufferedEnd / duration;
+              if (progress > lastProgress) {
+                lastProgress = progress;
+                updateProgress(progress);
+              }
+            }
+          }
+        } catch(e) {
+          // Ignore errors during progress tracking
+        }
+      });
+
+      // Hide loader when video can start playing
+      player.on('canplay', function() {
+        hideLoader();
+      });
+
+      // Also hide on play (fallback)
+      player.on('play', function() {
+        hideLoader();
+      });
+
+      // Hide loader when metadata is loaded (fallback)
+      player.on('loadedmetadata', function() {
+        // Set progress to 50% as a visual indicator
+        progressBar.style.width = '50%';
+        // If video doesn't start playing, we'll keep loader until canplay
+      });
+
+      // Handle loading states
+      player.on('loadstart', function() {
+        // Reset progress
+        lastProgress = 0;
+        progressBar.style.width = '0%';
+        errorMessage.classList.remove('show');
+      });
+
+      // Handle errors
+      player.on('error', function(event) {
+        console.error('Player error:', event.detail);
+        errorMessage.classList.add('show');
+        // Update loader text
+        document.querySelector('.loader-text').textContent = 'Error loading video';
+        // Remove spinner, show error
+        document.querySelector('.spinner').style.display = 'none';
+        progressBar.style.display = 'none';
+      });
+
+      // Timeout fallback: hide loader after 10 seconds even if video doesn't start
+      setTimeout(function() {
+        if (!loaderHidden) {
+          console.warn('Loader timeout - forcing hide');
+          hideLoader();
+        }
+      }, 10000);
+
+      // Log when video is loaded
+      player.on('loadedmetadata', function() {
+        console.log('Video metadata loaded');
+      });
+    });
+  </script>
+<!-- ad/tracking (kept as in original) -->
+  <script>(function(s){s.dataset.zone='10603308',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+</body>
+</html>
