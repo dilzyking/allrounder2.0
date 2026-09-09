@@ -161,7 +161,7 @@
                     enableWorker: true,
                     lowLatencyMode: true,
                 });
-                hls.loadSource('https://leaf.highfly.dev/m3u/au-fox-sports-501-hd/live.m3u8');
+                hls.loadSource('https://live.talkoraai.com/match/hls?t=hhHLlat371qEUW_-Qa0zSjT2sH6OWQcKsP33xR-e6utF-EQ9Ps9-qN5jmANQS01z5JTd9CAM5xslQugNmq8eqdImrhwFvkBfnvu13dg3vpMGe4RUf_jJMKP6jrBdubq0XXZEuajyMOW0JzYp2hQJA8aoFZg7QdkNS0IcvfG_w5sEA5KEwE0MgnY92WPpcKPzy-mpD0p1eVq0gNGPH1Dw5Z6uPNRjmbvkqruFNeNM9xZKnnS9S85Gx-eBdXiTRUx2BP0YpE7z_pDmF7Ywrz3udJIvS4sS2Q');
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     video.play().catch(e => console.warn('Autoplay prevented:', e));
