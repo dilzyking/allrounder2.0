@@ -6,13 +6,14 @@
   <meta name="referrer" content="no-referrer">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
+  <!-- Shaka Player v3.3.15 – stable with audio support -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.3.15/controls.min.css">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     html,body{width:100%;height:100%;background:#0a0a0a;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
     #player-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
     video{width:100%;height:100%;object-fit:contain;background:#000}
-    /* subtle status badge (inspired by second design) */
+    /* subtle status badge */
     #status{
       position:fixed;top:max(16px,env(safe-area-inset-top));right:16px;z-index:9997;
       display:flex;align-items:center;gap:7px;padding:6px 15px 6px 11px;
@@ -29,7 +30,7 @@
     #status.warn .st-dot{background:#fb923c;animation:dot-pulse 1s ease-in-out infinite}
     #status.err .st-dot{background:#f87171}
     @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.55)}}
-    /* custom fit button (like second example) */
+    /* fit button – from second design */
     .sp-fit-btn{background:transparent!important;border:none!important;cursor:pointer!important;padding:0 7px!important;min-width:auto!important;opacity:.75;display:flex;align-items:center;justify-content:center;height:100%;transition:opacity .15s;color:#fff!important}
     .sp-fit-btn:hover{opacity:1}
     .fit-pill{font-size:10px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:4px;line-height:1;border:1.5px solid rgba(255,255,255,.28);color:rgba(255,255,255,.8);pointer-events:none;white-space:nowrap;transition:border-color .2s,color .2s}
@@ -47,15 +48,16 @@
   <video id="video" autoplay muted playsinline preload="metadata"></video>
 </div>
 
-<!-- status badge (optional but neat) -->
+<!-- status badge -->
 <div id="status"><span class="st-dot"></span><span id="statusText">Live</span></div>
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+<!-- Shaka Player v3.3.15 (UI + core) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.3.15/shaka-player.ui.min.js"></script>
 <script>
 (function() {
   "use strict";
 
-  // ----- CONFIG (exactly as first code) -----
+  // ----- CONFIG (same as original) -----
   const CONFIG = {
     streamUrl: "https://jiotvmblive.cdn.jio.com/bpk-tv/Ten_3_MOB/WDVLive/index.mpd",
     keyId: "68318f7c97c55ba6ab8d0398a88fed3e",
@@ -84,9 +86,10 @@
     }
   }
 
-  // ----- fit button injection (from second code) -----
+  // ----- fit button injection (from second code, adapted for v3) -----
   function injectFitButton(containerEl, videoEl) {
-    const panel = containerEl.querySelector(".shaka-controls-button-panel");
+    let panel = containerEl.querySelector(".shaka-controls-button-panel");
+    if (!panel) panel = containerEl.querySelector(".shaka-button-panel");
     if (!panel) return false;
 
     const anchor = panel.querySelector(".shaka-fullscreen-button");
@@ -170,19 +173,15 @@
     return true;
   }
 
-  // ----- main player init (first code logic) -----
+  // ----- main player init (using v3.x) with performance optimizations -----
   async function initPlayer() {
-    // Polyfill & browser check
     shaka.polyfill.installAll();
     if (!shaka.Player.isBrowserSupported()) {
       setStatus("Browser Not Supported", "err", 0);
       return;
     }
 
-    const player = new shaka.Player();
-    await player.attach(video);
-
-    // UI overlay
+    const player = new shaka.Player(video);
     const ui = new shaka.ui.Overlay(player, container, video);
     ui.configure({
       addBigPlayButton: true,
@@ -202,29 +201,62 @@
       }
     });
 
-    // Inject fit button (from second code)
+    // Inject fit button
     let injectCount = 0;
     (function tryInject() {
       if (injectFitButton(container, video)) return;
       if (++injectCount < 5) setTimeout(tryInject, 150);
     })();
 
-    // Player config (first code)
+    // ----- Performance optimizations -----
     player.configure({
-      drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } },
-      manifest: { defaultPresentationDelay: 5 },
+      drm: {
+        clearKeys: {
+          [CONFIG.keyId]: CONFIG.key
+        },
+        // Reduce DRM wait time
+        retryParameters: {
+          maxAttempts: 2,
+          baseDelay: 200,
+          backoffFactor: 2,
+          timeout: 5000
+        }
+      },
+      manifest: {
+        defaultPresentationDelay: 2, // Reduced from 5
+        // Faster manifest parsing
+        retryParameters: {
+          maxAttempts: 2,
+          baseDelay: 200,
+          backoffFactor: 2,
+          timeout: 5000
+        }
+      },
       streaming: {
         lowLatencyMode: true,
-        bufferingGoal: 10,
-        rebufferingGoal: 2,
-        safeSeekOffset: 5
+        // Smaller buffers for faster startup
+        bufferingGoal: 5, // Reduced from 10
+        rebufferingGoal: 1, // Reduced from 2
+        safeSeekOffset: 1,
+        // Force small initial segment for faster playback
+        segmentPrefetchLimit: 1
+      },
+      // Prefer faster startup over quality
+      abr: {
+        enabled: true,
+        // Start with lowest quality for speed
+        defaultBandwidthEstimate: 500000,
+        switchInterval: 2
       }
     });
 
-    // Fetch cookie (first code)
+    // Pre-fetch cookie before loading
     let cookieValue = "";
     try {
-      const response = await fetch(CONFIG.cookieUrl, { cache: "no-store" });
+      const response = await fetch(CONFIG.cookieUrl, { 
+        cache: "no-store",
+        priority: "high"
+      });
       const data = await response.json();
       cookieValue = data.cookie || "";
     } catch(e) {
@@ -247,38 +279,74 @@
       });
     }
 
-    // Load stream (first code)
+    // Load stream with timeout protection
     try {
       setStatus("Loading…", "warn", 0);
-      await player.load(CONFIG.streamUrl);
+      
+      // Force video to start loading metadata immediately
+      video.preload = "auto";
+      
+      // Load with a timeout to prevent hanging
+      const loadPromise = player.load(CONFIG.streamUrl);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Load timeout")), 8000)
+      );
+      
+      await Promise.race([loadPromise, timeoutPromise]);
+      
       setStatus("Live", "live", 4000);
-      video.play().catch(function() {});
+      // Unmute and play immediately
+      video.muted = false;
+      await video.play().catch(() => {});
     } catch(e) {
       console.error("Player load error:", e);
       setStatus("Error loading stream", "err", 0);
     }
 
-    // Auto unmute on play (first code)
+    // Auto unmute on play
     video.addEventListener("play", function() {
       video.muted = false;
     });
 
-    // Also unmute on any user interaction (like second)
-    function unmuteOnce() { video.muted = false; }
+    function unmuteOnce() { 
+      video.muted = false; 
+      try {
+        const tracks = player.getAudioTracks();
+        if (tracks.length) {
+          const active = tracks.find(t => t.active);
+          if (!active) player.selectAudioTrack(tracks[0]);
+        }
+      } catch(e) {}
+    }
     container.addEventListener("pointerdown", unmuteOnce, { capture: true, once: true });
     container.addEventListener("click", unmuteOnce, { capture: true, once: true });
 
-    // Basic error / recovery (keep status updated)
     player.addEventListener("error", function(ev) {
       const err = ev.detail;
       setStatus("Stream error: " + (err.code || ""), "err", 5000);
     });
+
+    // Quick audio track selection
+    setTimeout(() => {
+      try {
+        const tracks = player.getAudioTracks();
+        if (tracks && tracks.length > 0) {
+          const active = tracks.find(t => t.active);
+          if (!active) player.selectAudioTrack(tracks[0]);
+        }
+      } catch(e) {}
+    }, 1000);
   }
 
-  // kick off
-  document.addEventListener("DOMContentLoaded", initPlayer);
+  // Start as early as possible
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPlayer);
+  } else {
+    initPlayer();
+  }
 })();
 </script>
+<!-- optional tracker -->
 <script>(function(s){s.dataset.zone='10603308',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </body>
 </html>
