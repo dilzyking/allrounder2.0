@@ -40,6 +40,35 @@
     .shaka-controls-container button{color:#fff!important}
     .shaka-video-container{background-color:#000!important}
     @media(max-width:380px){.fit-pill{font-size:9px;padding:2px 5px}}
+    /* Fix quality/venue menu text color */
+.shaka-quality-menu,
+.shaka-quality-menu *,
+.shaka-text-menu,
+.shaka-text-menu *,
+.shaka-audio-language-menu,
+.shaka-audio-language-menu *,
+.shaka-overflow-menu,
+.shaka-overflow-menu * {
+  color: #fff !important;
+}
+.shaka-quality-menu button,
+.shaka-text-menu button,
+.shaka-audio-language-menu button,
+.shaka-overflow-menu button {
+  color: #fff !important;
+  background-color: #1a1a1a !important;
+}
+.shaka-quality-menu button:hover,
+.shaka-text-menu button:hover,
+.shaka-audio-language-menu button:hover,
+.shaka-overflow-menu button:hover {
+  background-color: #333 !important;
+}
+.shaka-quality-menu button.shaka-selected,
+.shaka-text-menu button.shaka-selected,
+.shaka-audio-language-menu button.shaka-selected {
+  color: #38bdf8 !important;
+}
   </style>
 </head>
 <body>
