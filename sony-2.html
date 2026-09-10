@@ -88,7 +88,6 @@
 
   // ----- fit button injection (from second code, adapted for v3) -----
   function injectFitButton(containerEl, videoEl) {
-    // In v3 the panel might be .shaka-controls-button-panel or .shaka-button-panel
     let panel = containerEl.querySelector(".shaka-controls-button-panel");
     if (!panel) panel = containerEl.querySelector(".shaka-button-panel");
     if (!panel) return false;
@@ -174,9 +173,8 @@
     return true;
   }
 
-  // ----- main player init (using v3.x) -----
+  // ----- main player init (using v3.x) with performance optimizations -----
   async function initPlayer() {
-    // Polyfill & browser check (v3 API)
     shaka.polyfill.installAll();
     if (!shaka.Player.isBrowserSupported()) {
       setStatus("Browser Not Supported", "err", 0);
@@ -184,9 +182,6 @@
     }
 
     const player = new shaka.Player(video);
-    // attach to video element (v3: constructor already attaches)
-
-    // UI overlay – v3 UI
     const ui = new shaka.ui.Overlay(player, container, video);
     ui.configure({
       addBigPlayButton: true,
@@ -206,35 +201,62 @@
       }
     });
 
-    // Inject fit button (from second code)
+    // Inject fit button
     let injectCount = 0;
     (function tryInject() {
       if (injectFitButton(container, video)) return;
       if (++injectCount < 5) setTimeout(tryInject, 150);
     })();
 
-    // Player config – v3 uses similar drm/streaming keys
+    // ----- Performance optimizations -----
     player.configure({
       drm: {
         clearKeys: {
           [CONFIG.keyId]: CONFIG.key
+        },
+        // Reduce DRM wait time
+        retryParameters: {
+          maxAttempts: 2,
+          baseDelay: 200,
+          backoffFactor: 2,
+          timeout: 5000
         }
       },
       manifest: {
-        defaultPresentationDelay: 5
+        defaultPresentationDelay: 2, // Reduced from 5
+        // Faster manifest parsing
+        retryParameters: {
+          maxAttempts: 2,
+          baseDelay: 200,
+          backoffFactor: 2,
+          timeout: 5000
+        }
       },
       streaming: {
         lowLatencyMode: true,
-        bufferingGoal: 10,
-        rebufferingGoal: 2,
-        safeSeekOffset: 5
+        // Smaller buffers for faster startup
+        bufferingGoal: 5, // Reduced from 10
+        rebufferingGoal: 1, // Reduced from 2
+        safeSeekOffset: 1,
+        // Force small initial segment for faster playback
+        segmentPrefetchLimit: 1
+      },
+      // Prefer faster startup over quality
+      abr: {
+        enabled: true,
+        // Start with lowest quality for speed
+        defaultBandwidthEstimate: 500000,
+        switchInterval: 2
       }
     });
 
-    // Fetch cookie (from first code)
+    // Pre-fetch cookie before loading
     let cookieValue = "";
     try {
-      const response = await fetch(CONFIG.cookieUrl, { cache: "no-store" });
+      const response = await fetch(CONFIG.cookieUrl, { 
+        cache: "no-store",
+        priority: "high"
+      });
       const data = await response.json();
       cookieValue = data.cookie || "";
     } catch(e) {
@@ -242,7 +264,6 @@
     }
 
     if (cookieValue) {
-      // v3 networking filter
       player.getNetworkingEngine().registerRequestFilter((type, request) => {
         request.headers["Referer"] = "https://www.jiotv.com/";
         request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
@@ -258,28 +279,37 @@
       });
     }
 
-    // Load stream
+    // Load stream with timeout protection
     try {
       setStatus("Loading…", "warn", 0);
-      await player.load(CONFIG.streamUrl);
+      
+      // Force video to start loading metadata immediately
+      video.preload = "auto";
+      
+      // Load with a timeout to prevent hanging
+      const loadPromise = player.load(CONFIG.streamUrl);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Load timeout")), 8000)
+      );
+      
+      await Promise.race([loadPromise, timeoutPromise]);
+      
       setStatus("Live", "live", 4000);
-      // Unmute after load (user gesture will be captured, but we try)
+      // Unmute and play immediately
       video.muted = false;
-      video.play().catch(function() {});
+      await video.play().catch(() => {});
     } catch(e) {
       console.error("Player load error:", e);
       setStatus("Error loading stream", "err", 0);
     }
 
-    // Auto unmute on play (first code)
+    // Auto unmute on play
     video.addEventListener("play", function() {
       video.muted = false;
     });
 
-    // Also unmute on any user interaction (like second)
     function unmuteOnce() { 
       video.muted = false; 
-      // also ensure audio track is selected (v3)
       try {
         const tracks = player.getAudioTracks();
         if (tracks.length) {
@@ -291,14 +321,12 @@
     container.addEventListener("pointerdown", unmuteOnce, { capture: true, once: true });
     container.addEventListener("click", unmuteOnce, { capture: true, once: true });
 
-    // Error / recovery (keep status updated)
     player.addEventListener("error", function(ev) {
       const err = ev.detail;
       setStatus("Stream error: " + (err.code || ""), "err", 5000);
     });
 
-    // Additional audio track selection: ensure audio plays
-    // v3: if audio track is missing, we try to select default
+    // Quick audio track selection
     setTimeout(() => {
       try {
         const tracks = player.getAudioTracks();
@@ -307,11 +335,15 @@
           if (!active) player.selectAudioTrack(tracks[0]);
         }
       } catch(e) {}
-    }, 2000);
+    }, 1000);
   }
 
-  // kick off
-  document.addEventListener("DOMContentLoaded", initPlayer);
+  // Start as early as possible
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPlayer);
+  } else {
+    initPlayer();
+  }
 })();
 </script>
 <!-- optional tracker -->
