@@ -39,36 +39,95 @@
     .sp-fit-btn.mode-cover .fit-pill{border-color:#a78bfa;color:#a78bfa}
     .shaka-controls-container button{color:#fff!important}
     .shaka-video-container{background-color:#000!important}
+
+    /* ---- FIX: quality / venue / menu text colour ---- */
+    .shaka-controls-container .shaka-quality-menu,
+    .shaka-controls-container .shaka-text-menu,
+    .shaka-controls-container .shaka-audio-language-menu,
+    .shaka-controls-container .shaka-overflow-menu,
+    .shaka-controls-container [class*="shaka-quality"],
+    .shaka-controls-container [class*="shaka-text"],
+    .shaka-controls-container [class*="shaka-audio-language"],
+    .shaka-controls-container [class*="shaka-overflow"],
+    .shaka-quality-menu,
+    .shaka-text-menu,
+    .shaka-audio-language-menu,
+    .shaka-overflow-menu {
+      background-color: #1a1a1a !important;
+      color: #fff !important;
+    }
+
+    .shaka-controls-container .shaka-quality-menu *,
+    .shaka-controls-container .shaka-text-menu *,
+    .shaka-controls-container .shaka-audio-language-menu *,
+    .shaka-controls-container .shaka-overflow-menu *,
+    .shaka-controls-container [class*="shaka-quality"] *,
+    .shaka-controls-container [class*="shaka-text"] *,
+    .shaka-controls-container [class*="shaka-audio-language"] *,
+    .shaka-controls-container [class*="shaka-overflow"] *,
+    .shaka-quality-menu *,
+    .shaka-text-menu *,
+    .shaka-audio-language-menu *,
+    .shaka-overflow-menu * {
+      color: #fff !important;
+      background-color: transparent !important;
+      text-shadow: none !important;
+    }
+
+    .shaka-controls-container .shaka-quality-menu button,
+    .shaka-controls-container .shaka-text-menu button,
+    .shaka-controls-container .shaka-audio-language-menu button,
+    .shaka-controls-container .shaka-overflow-menu button,
+    .shaka-controls-container [class*="shaka-quality"] button,
+    .shaka-controls-container [class*="shaka-text"] button,
+    .shaka-controls-container [class*="shaka-audio-language"] button,
+    .shaka-controls-container [class*="shaka-overflow"] button,
+    .shaka-quality-menu button,
+    .shaka-text-menu button,
+    .shaka-audio-language-menu button,
+    .shaka-overflow-menu button {
+      color: #fff !important;
+      background-color: #1a1a1a !important;
+      text-shadow: none !important;
+    }
+
+    .shaka-controls-container .shaka-quality-menu button:hover,
+    .shaka-controls-container .shaka-text-menu button:hover,
+    .shaka-controls-container .shaka-audio-language-menu button:hover,
+    .shaka-controls-container .shaka-overflow-menu button:hover,
+    .shaka-controls-container [class*="shaka-quality"] button:hover,
+    .shaka-controls-container [class*="shaka-text"] button:hover,
+    .shaka-controls-container [class*="shaka-audio-language"] button:hover,
+    .shaka-controls-container [class*="shaka-overflow"] button:hover,
+    .shaka-quality-menu button:hover,
+    .shaka-text-menu button:hover,
+    .shaka-audio-language-menu button:hover,
+    .shaka-overflow-menu button:hover {
+      background-color: #333 !important;
+      color: #fff !important;
+    }
+
+    .shaka-controls-container .shaka-quality-menu button.shaka-selected,
+    .shaka-controls-container .shaka-text-menu button.shaka-selected,
+    .shaka-controls-container .shaka-audio-language-menu button.shaka-selected,
+    .shaka-quality-menu button.shaka-selected,
+    .shaka-text-menu button.shaka-selected,
+    .shaka-audio-language-menu button.shaka-selected {
+      color: #38bdf8 !important;
+      font-weight: 700 !important;
+    }
+
+    /* Catch-all safety net for any Shaka menu text */
+    .shaka-controls-container [class*="menu"] {
+      background-color: #1a1a1a !important;
+    }
+    .shaka-controls-container [class*="menu"] * {
+      color: #fff !important;
+      text-shadow: none !important;
+    }
+    /* ---- END FIX ---- */
+
     @media(max-width:380px){.fit-pill{font-size:9px;padding:2px 5px}}
-    /* Fix quality/venue menu text color */
-.shaka-quality-menu,
-.shaka-quality-menu *,
-.shaka-text-menu,
-.shaka-text-menu *,
-.shaka-audio-language-menu,
-.shaka-audio-language-menu *,
-.shaka-overflow-menu,
-.shaka-overflow-menu * {
-  color: #fff !important;
-}
-.shaka-quality-menu button,
-.shaka-text-menu button,
-.shaka-audio-language-menu button,
-.shaka-overflow-menu button {
-  color: #fff !important;
-  background-color: #1a1a1a !important;
-}
-.shaka-quality-menu button:hover,
-.shaka-text-menu button:hover,
-.shaka-audio-language-menu button:hover,
-.shaka-overflow-menu button:hover {
-  background-color: #333 !important;
-}
-.shaka-quality-menu button.shaka-selected,
-.shaka-text-menu button.shaka-selected,
-.shaka-audio-language-menu button.shaka-selected {
-  color: #38bdf8 !important;
-}
   </style>
 </head>
 <body>
