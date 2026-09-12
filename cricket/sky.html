@@ -161,7 +161,7 @@
                     enableWorker: true,
                     lowLatencyMode: true,
                 });
-                hls.loadSource('https://live.talkoraai.com/match/hls?t=hhHLlat371qEUW_-Qa0zSjT2sH6OWQcKsP33xR-e6utF-EQ9Ps9-qN5jmANQS01z5JTd9CAM5xslQugNmq8eqdImrhwFvkBfnvu13dg3vpMGe4RUf_jJMKP6jrBdubq0XXZEuajyMOW0JzYp2hQJA8aoFZg7QdkNS0IcvfG_w5sEA5KEwE0MgnY92WPpcKPzy-mpD0p1eVq0gNGPH1Dw5Z6uPNRjmbvkqruFNeNM9xZKnnS9S85Gx-eBdXiTRUx2BP0YpE7z_pDmF7Ywrz3udJIvS4sS2Q');
+                hls.loadSource('https://live.talkoraai.com/match/hls?t=wPujRZjDF9jwh_GVQP0paeVyqQsqjIwCXpt5L7gvYKBQzn3oEmCV3dKMbmA6_ppBHWq6nOIuk3gGzw6MlINjsG9Kl58KljLdrF0pl9SDvdLJPrzeBwu1KtFpUIMeefkVXffiNlSU03KhTZxiukuxM7ihoC-RGQMg3BMOZ_MwIM-yBCcVfWxnoYt6OwKSbBCI3yzfJmADY_LwBj2hStWkma7GD2SzdwgK00GZS9knKg5PKB7q35E8jX3csmMJwN_SXg1bEcuiI5uNprknF8W3m-oY37d7VA');
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     video.play().catch(e => console.warn('Autoplay prevented:', e));
@@ -186,7 +186,7 @@
             } 
             // fallback: native HLS (Safari / iOS)
             else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = 'https://live.talkoraai.com/match/hls?t=hhHLlat371qEUW_-Qa0zSjT2sH6OWQcKsP33xR-e6utF-EQ9Ps9-qN5jmANQS01z5JTd9CAM5xslQugNmq8eqdImrhwFvkBfnvu13dg3vpMGe4RUf_jJMKP6jrBdubq0XXZEuajyMOW0JzYp2hQJA8aoFZg7QdkNS0IcvfG_w5sEA5KEwE0MgnY92WPpcKPzy-mpD0p1eVq0gNGPH1Dw5Z6uPNRjmbvkqruFNeNM9xZKnnS9S85Gx-eBdXiTRUx2BP0YpE7z_pDmF7Ywrz3udJIvS4sS2Q';
+                video.src = 'https://live.talkoraai.com/match/hls?t=wPujRZjDF9jwh_GVQP0paeVyqQsqjIwCXpt5L7gvYKBQzn3oEmCV3dKMbmA6_ppBHWq6nOIuk3gGzw6MlINjsG9Kl58KljLdrF0pl9SDvdLJPrzeBwu1KtFpUIMeefkVXffiNlSU03KhTZxiukuxM7ihoC-RGQMg3BMOZ_MwIM-yBCcVfWxnoYt6OwKSbBCI3yzfJmADY_LwBj2hStWkma7GD2SzdwgK00GZS9knKg5PKB7q35E8jX3csmMJwN_SXg1bEcuiI5uNprknF8W3m-oY37d7VA';
                 video.addEventListener('loadedmetadata', function() {
                     video.play().catch(e => console.warn('Autoplay blocked:', e));
                 });
