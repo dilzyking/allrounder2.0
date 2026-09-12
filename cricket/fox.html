@@ -139,7 +139,7 @@
     <div class="player-wrapper">
         <!-- Plyr video element – no text, only player -->
         <video id="foxPlayer" playsinline crossorigin>
-            <source src="https://leaf.highfly.dev/m3u/au-fox-sports-501-hd/live.m3u8" type="application/vnd.apple.mpegurl" />
+            <source src="https://cdn06khi-n.tamashaweb.com:8087/jazzauth/PAKvsEng-Test-SVOD-abr/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9OC8xOS8yMDI2IDk6NDQ6NDcgQU0maGFzaF92YWx1ZT1VVmp4c1lmVFhEQ3hPNklqNDRUalV3PT0mdmFsaWRtaW51dGVzPTYw" type="application/vnd.apple.mpegurl" />
             <!-- fallback (in case m3u8 not supported) – but plyr handles -->
             <p>Your browser does not support HLS. Please use a modern browser.</p>
         </video>
@@ -186,7 +186,7 @@
             } 
             // fallback: native HLS (Safari / iOS)
             else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = 'https://leaf.highfly.dev/m3u/au-fox-sports-501-hd/live.m3u8';
+                video.src = 'https://cdn06khi-n.tamashaweb.com:8087/jazzauth/PAKvsEng-Test-SVOD-abr/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9OC8xOS8yMDI2IDk6NDQ6NDcgQU0maGFzaF92YWx1ZT1VVmp4c1lmVFhEQ3hPNklqNDRUalV3PT0mdmFsaWRtaW51dGVzPTYw';
                 video.addEventListener('loadedmetadata', function() {
                     video.play().catch(e => console.warn('Autoplay blocked:', e));
                 });
