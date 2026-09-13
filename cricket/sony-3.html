@@ -2,59 +2,298 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Full Page Player – No Gap</title>
+  <title>CRICKLY FANCODE LIVE WEB PLAYER</title>
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- SHAKA PLAYER (LATEST 4.16.3) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/controls.min.css">
+
   <style>
-    /* Reset all margins, paddings, and gaps */
-    * {
+    /* PLAYER ONLY STYLES */
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
+      background: #000;
       height: 100%;
-      overflow: hidden;          /* prevent scrollbars from any tiny overflow */
-      background-color: #000;    /* black background for seamless edges */
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
     }
 
-    /* Full-page iframe container – fills entire viewport */
-    .player-wrapper {
-      position: fixed;           /* fix to viewport, ignores any body flow */
+    .video-container {
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      width: 100%;
+      height: 100%;
       background: #000;
     }
 
-    /* The iframe itself – stretches to fill wrapper completely,
-       no border, no margin, no padding, no gaps */
-    .player-wrapper iframe {
-      display: block;            /* remove inline element gap */
+    .shaka-video-container {
       width: 100%;
       height: 100%;
-      border: 0;
-      margin: 0;
-      padding: 0;
-      /* aspect-ratio is intentionally removed so iframe fills 
-         exactly 100% height/width of wrapper (no letterboxing) */
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    /* LOADING OVERLAY */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: #000;
+      color: #fff;
+      z-index: 2000;
+      font-size: 18px;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255,255,255,.2);
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ---------- CLICK FOR SOUND BUTTON (CORNER) ---------- */
+    .sound-btn {
+      position: absolute;
+      bottom: 80px;
+      right: 16px;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      color: white;
+      border: 1.5px solid rgba(59, 130, 246, 0.8);
+      border-radius: 30px;
+      padding: 8px 16px 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+      transition: all 0.2s ease;
+      pointer-events: auto;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .sound-btn:hover {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+      transform: scale(1.04);
+    }
+
+    .sound-btn:active {
+      transform: scale(0.96);
+    }
+
+    .sound-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    /* hidden state */
+    .sound-btn.hidden {
+      display: none;
+    }
+
+    /* pulse animation to draw attention */
+    @keyframes pulse-glow {
+      0%   { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.8); }
+      70%  { box-shadow: 0 0 0 14px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
+    .sound-btn.pulse {
+      animation: pulse-glow 1.8s infinite;
+    }
+
+    /* Mobile tweak */
+    @media (max-width: 480px) {
+      .sound-btn {
+        bottom: 72px;
+        right: 12px;
+        padding: 7px 13px 7px 10px;
+        font-size: 12px;
+      }
+      .sound-btn svg {
+        width: 18px;
+        height: 18px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="player-wrapper">
-    <iframe
-      src="https://matchdekho.in/fc-play?url=https%3A%2F%2Fin-mc-flive.fancode.com%2Fmumbai%2F4248491_hindi_hls_ed24a8186993836_1ta-di_h264%2F1080p.m3u8%3Fhdntl%3DExpires%3D1789392659~_GO%3DGenerated~acl%3D%2Fmumbai%2F4248491_hindi_hls_ed24a8186993836_1ta-di_h264%2F*~Signature%3DAWDec-HByQhk68qSCnCZyABpf45aQQnnay5WKHnruoErrGrN-vafHAIvAttH8kmxylYL3z2vHk2KCGSXRBizd32DMxwF&title=India%20Tour%20of%20Afghanistan%2C%202026%20%5BHindi%5D&match_id=4248491"
-      sandbox="allow-scripts allow-same-origin"
-      referrerpolicy="no-referrer"
-      allow="encrypted-media; fullscreen"
-      allowfullscreen
-      title="Full page video player"
-    ></iframe>
+
+<div class="video-container">
+  <div class="shaka-video-container" data-shaka-player>
+    <video id="video" autoplay playsinline muted></video>
+
+    <!-- LOADING -->
+    <div id="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      Analyzing the video...
+    </div>
+
+    <!-- CLICK FOR SOUND BUTTON -->
+    <button id="soundBtn" class="sound-btn pulse" title="Click for sound">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+      <span>Click for sound</span>
+    </button>
   </div>
+</div>
+
+<script>
+  /* ================= STREAM (FANCODE HLS with token) ================= */
+  const streamUrl =
+    "https://in-mc-flive.fancode.com/mumbai/4248491_hindi_hls_ed24a8186993836_1ta-di_h264/1080p.m3u8?hdntl=Expires=1789392659~_GO=Generated~acl=/mumbai/4248491_hindi_hls_ed24a8186993836_1ta-di_h264/*~Signature=AWDec-HByQhk68qSCnCZyABpf45aQQnnay5WKHnruoErrGrN-vafHAIvAttH8kmxylYL3z2vHk2KCGSXRBizd32DMxwF";
+
+  /* ================= PLAYER ================= */
+  const video = document.getElementById("video");
+  const loading = document.getElementById("loading");
+  const soundBtn = document.getElementById("soundBtn");
+
+  // Force full volume and unmute
+  function forceFullVolume() {
+    if (!video) return;
+    video.muted = false;
+    video.volume = 1.0;
+    if (video.paused) {
+      video.play().catch(e => console.log("play after unmute:", e));
+    }
+    soundBtn.classList.add("hidden");
+    soundBtn.classList.remove("pulse");
+  }
+
+  // Click handler for "Click for sound"
+  if (soundBtn) {
+    soundBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      forceFullVolume();
+    });
+  }
+
+  // Show / hide button based on mute state
+  function syncSoundButton() {
+    if (!video) return;
+    if (video.muted || video.volume < 0.01) {
+      soundBtn.classList.remove("hidden");
+      soundBtn.classList.add("pulse");
+    } else {
+      soundBtn.classList.add("hidden");
+      soundBtn.classList.remove("pulse");
+    }
+  }
+
+  // Listen to volume changes
+  video.addEventListener("volumechange", syncSoundButton);
+  video.addEventListener("playing", () => {
+    loading.style.display = "none";
+    syncSoundButton();
+  });
+
+  // Initial state
+  syncSoundButton();
+
+  /* ================= INIT PLAYER (SHAKA 4.16.3) ================= */
+  async function initPlayer() {
+    if (!streamUrl) {
+      alert("Stream URL missing");
+      return;
+    }
+
+    try {
+      const player = new shaka.Player(video);
+      const container = document.querySelector(".shaka-video-container");
+      const ui = new shaka.ui.Overlay(player, container, video);
+
+      ui.configure({
+        controlPanelElements: [
+          'play_pause',
+          'mute',
+          'time_and_duration',
+          'spacer',
+          'quality',
+          'language',
+          'picture_in_picture',
+          'fullscreen',
+          'overflow_menu'
+        ],
+        addSeekBar: true
+      });
+
+      player.configure({
+        streaming: {
+          bufferingGoal: 10,
+          rebufferingGoal: 2,
+          bufferBehind: 30
+        }
+      });
+
+      await player.load(streamUrl);
+
+      video.play().catch(() => {
+        video.muted = true;
+        video.play();
+      });
+
+      video.addEventListener("playing", () => {
+        loading.style.display = "none";
+        syncSoundButton();
+      });
+
+    } catch (e) {
+      console.log("Shaka error:", e);
+      // Fallback to native HLS
+      video.src = streamUrl;
+      video.play().catch(() => {
+        video.muted = true;
+        video.play();
+      });
+
+      video.addEventListener("playing", () => {
+        loading.style.display = "none";
+        syncSoundButton();
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initPlayer);
+</script>
+
 <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </body>
 </html>
