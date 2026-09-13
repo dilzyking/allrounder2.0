@@ -33,10 +33,18 @@
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
     {
-      "id": "hindi2",
+      "id": "hindi-2",
       "name": "Star Sports Hindi",
       "type": "iframe",
-      "iframeSrc": "https://allrounderlive.in/hindi2",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/hindi-2",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "eng-2",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/eng-2",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
@@ -281,7 +289,7 @@
       "id": "willow-2",
       "name": "Willow",
       "type": "iframe",
-      "iframeSrc": "https://allrounderlive.pages.dev/willow2",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/willow-2",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=willow",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=willow"
     },
@@ -457,7 +465,7 @@
       "id": "telugu",
       "name": "Star",
       "type": "iframe",
-      "iframeSrc": "https://allrounder-live4.pages.dev/star/telugu",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/telugu",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=SS",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=SS"
     },
@@ -473,7 +481,7 @@
       "id": "tamil",
       "name": "tamil",
       "type": "iframe",
-      "iframeSrc": "https://allrounder-live4.pages.dev/star/tamil-1",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/tamil",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=SS",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=SS"
     }
