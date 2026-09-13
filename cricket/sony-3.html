@@ -2,23 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NBCU Local Live Player — 100vh</title>
-
-  <!-- Plyr CSS -->
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L7VPXZYQPN"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-L7VPXZYQPN');
-  </script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Full Page Player – No Gap</title>
   <style>
-    /* Reset & full-height layout */
+    /* Reset all margins, paddings, and gaps */
     * {
       margin: 0;
       padding: 0;
@@ -28,130 +15,46 @@
     html, body {
       width: 100%;
       height: 100%;
+      overflow: hidden;          /* prevent scrollbars from any tiny overflow */
+      background-color: #000;    /* black background for seamless edges */
+    }
+
+    /* Full-page iframe container – fills entire viewport */
+    .player-wrapper {
+      position: fixed;           /* fix to viewport, ignores any body flow */
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       background: #000;
-      overflow: hidden;          /* prevent scrollbars from video overflow */
     }
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-    }
-
-    /* Player container takes exactly 100vh height — full viewport */
-    .player-container {
+    /* The iframe itself – stretches to fill wrapper completely,
+       no border, no margin, no padding, no gaps */
+    .player-wrapper iframe {
+      display: block;            /* remove inline element gap */
       width: 100%;
-      height: 100vh;             /* exactly 100vh height */
-      max-width: 1400px;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Video fills the container; Plyr will wrap it */
-    .player-container video,
-    .plyr {
-      width: 100%;
-      height: 100%;              /* force video to fill 100% of container height */
-      max-height: 100vh;
-      object-fit: contain;       /* keep aspect ratio, letterbox if needed */
-    }
-
-    /* Optional: ensure Plyr’s internal wrapper respects full height */
-    .plyr--video {
       height: 100%;
-      width: 100%;
-    }
-
-    .plyr__video-wrapper {
-      height: 100%;
-      width: 100%;
-    }
-
-    .plyr video {
-      object-fit: contain;
-      height: 100%;
-      width: 100%;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      /* aspect-ratio is intentionally removed so iframe fills 
+         exactly 100% height/width of wrapper (no letterboxing) */
     }
   </style>
 </head>
 <body>
-
-  <div class="player-container">
-    <video
-      id="player"
-      controls
-      playsinline
-      crossorigin
-    ></video>
+  <div class="player-wrapper">
+    <iframe
+      src="https://matchdekho.in/fc-play?url=https%3A%2F%2Fin-mc-flive.fancode.com%2Fmumbai%2F4248491_hindi_hls_ed24a8186993836_1ta-di_h264%2F1080p.m3u8%3Fhdntl%3DExpires%3D1789392659~_GO%3DGenerated~acl%3D%2Fmumbai%2F4248491_hindi_hls_ed24a8186993836_1ta-di_h264%2F*~Signature%3DAWDec-HByQhk68qSCnCZyABpf45aQQnnay5WKHnruoErrGrN-vafHAIvAttH8kmxylYL3z2vHk2KCGSXRBizd32DMxwF&title=India%20Tour%20of%20Afghanistan%2C%202026%20%5BHindi%5D&match_id=4248491"
+      sandbox="allow-scripts allow-same-origin"
+      referrerpolicy="no-referrer"
+      allow="encrypted-media; fullscreen"
+      allowfullscreen
+      title="Full page video player"
+    ></iframe>
   </div>
-
-  <!-- HLS.js and Plyr scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-
-  <script>
-    const video = document.getElementById('player');
-
-    const streamUrl =
-      'https://ingest4-9869.boxcast.com/satisfying-year/dhii6vrqpq5jdgsbz3cy/1080p-byteranges-ext.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9pbmdlc3Q0LTk4NjkuYm94Y2FzdC5jb20vc2F0aXNmeWluZy15ZWFyL2RoaWk2dnJxcHE1amRnc2J6M2N5LzEwODBwLWJ5dGVyYW5nZXMtZXh0Lm0zdTgiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MTYwNTd9fX1dfQ&Signature=qXFLEwc8QLm6LZD6Ezj1yPuxKTRMX6CO0JHLSmB9N3XMon~FhV4gnEm2es741WirywgDzZ-W2OL6mdosWi1gkGEUDaN9DPmik6VrNGf31gcMirQPtq5fDOJ-~-Oq0PxEezc97NvdE4myKkULsb7Ic3OKZxLXUq1tpcp8CUMeANssqSyeYbAiVNKI8qtSGlFAd24Upj88w-wTnLy~~EaTCD7g2DCgKQjuUGVhkfBOeiThuRPWT1I0jL3qTTEdxNwkuPlLlKE34FrfV6-JAlcmyi6irz1~NogdLDu6IsVX1O8ypDdB3RWi7Y-~rTv89FgLoJl8eqFpN0DNifWsCQVkzw&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA';
-
-    // Initialize Plyr with all controls
-    const player = new Plyr(video, {
-      controls: [
-        'play-large',
-        'play',
-        'progress',
-        'current-time',
-        'mute',
-        'volume',
-        'settings',
-        'pip',
-        'airplay',
-        'fullscreen'
-      ],
-      settings: ['speed'],
-      speed: {
-        selected: 1,
-        options: [0.5, 0.75, 1, 1.25, 1.5, 2]
-      },
-      // Make sure Plyr uses 100% height of its parent
-      ratio: null,
-      fullscreen: { enabled: true, fallback: true, iosNative: false }
-    });
-
-    // HLS setup
-    if (Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true
-      });
-
-      hls.loadSource(streamUrl);
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        video.play().catch(() => {});
-      });
-
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = streamUrl;
-      video.addEventListener('loadedmetadata', function () {
-        video.play().catch(() => {});
-      });
-    }
-  </script>
-
-  <!-- Ad / tag script (optional) -->
-  <script>
-    (function(s){
-      s.dataset.zone='10603308',
-      s.src='https://llvpn.com/tag.min.js'
-    })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))
-  </script>
 <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
 </body>
 </html>
