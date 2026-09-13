@@ -1,288 +1,139 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fox 501 · Plyr</title>
-    <!-- Plyr CSS (v3.7.8) -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <style>
-        /* reset & fullscreen bedrock */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #0b0b0b; /* deep black, no text */
-            overflow: hidden;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
-        /* main container – exact 100vh/100vw, no extra text */
-        .player-wrapper {
-            width: 100vw;
-            height: 100vh;
-            max-width: 100%;
-            max-height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-        }
-        /* plyr container fills the viewport, no margins */
-        #foxPlayer {
-            width: 100%;
-            height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            background: #000;
-        }
-        /* override plyr default subtle styling – keep it clean */
-        .plyr--video {
-            background: #000;
-        }
-        /* ===== PREMIUM RED PROGRESS BAR ===== */
-        /* main progress bar track – red glow */
-        .plyr__progress__buffer,
-        .plyr__progress__buffer::-webkit-progress-bar {
-            background: rgba(255, 255, 255, 0.15) !important;
-        }
-        /* the filled portion (played) – pure red, vivid */
-        .plyr__progress__played,
-        .plyr__progress__played::-webkit-progress-value {
-            background: #e50914 !important;   /* netflix-style red */
-            background-image: linear-gradient(135deg, #ff1a1a, #cc0000) !important;
-            box-shadow: 0 0 12px #e50914aa, 0 0 4px #ff4d4d80 !important;
-            transition: background 0.1s ease;
-        }
-        /* scrubber handle (thumb) – red with glow */
-        .plyr__progress__thumb {
-            background: #e50914 !important;
-            box-shadow: 0 0 16px #e50914, 0 0 6px #ff6666 !important;
-            border: 2px solid #fff !important;
-            transition: box-shadow 0.2s;
-        }
-        /* hover effect on thumb */
-        .plyr__progress__thumb:hover {
-            box-shadow: 0 0 24px #ff3333, 0 0 12px #ff9999 !important;
-        }
-        /* volume & other progress bars (keep consistent) */
-        .plyr__volume input[type="range"]::-webkit-slider-runnable-track,
-        .plyr__volume input[type="range"]::-moz-range-track {
-            background: rgba(255,255,255,0.2) !important;
-        }
-        .plyr__volume input[type="range"]::-webkit-slider-thumb {
-            background: #e50914 !important;
-            box-shadow: 0 0 8px #e50914 !important;
-        }
-        /* hide any potential text or labels – only player visible */
-        .plyr__controls .plyr__control__label,
-        .plyr__menu__label,
-        .plyr__tooltip,
-        .plyr__control--forward,
-        .plyr__time,
-        .plyr__menu__container .plyr__control {
-            /* keep controls but no extra text noise – we keep minimal UI */
-        }
-        /* ensure no floating text, only player */
-        .plyr__captions, 
-        .plyr__video-embed,
-        .plyr__poster {
-            /* no text additions */
-        }
-        /* make sure the wrapper has no extra spacing */
-        .player-wrapper video {
-            object-fit: contain;
-            background: #000;
-        }
-        /* subtle quality selector (built-in) – keep it red accent */
-        .plyr__control[aria-pressed="true"] {
-            background: #e50914 !important;
-        }
-        /* fullscreen icon red tint on hover */
-        .plyr__control:hover {
-            background: #e50914 !important;
-        }
-        /* progress bar container – ensure it's red */
-        .plyr__progress input[type="range"]::-webkit-slider-runnable-track {
-            background: rgba(255,255,255,0.2) !important;
-        }
-        .plyr__progress input[type="range"]::-webkit-slider-thumb {
-            background: #e50914 !important;
-            box-shadow: 0 0 20px #e50914cc !important;
-        }
-        /* edge: firefox progress */
-        .plyr__progress input[type="range"]::-moz-range-thumb {
-            background: #e50914 !important;
-            border: 2px solid white !important;
-            box-shadow: 0 0 16px #e50914 !important;
-        }
-        .plyr__progress input[type="range"]::-moz-range-progress {
-            background: #e50914 !important;
-        }
-        /* hide all text elements, keep only controls */
-        .plyr__controls .plyr__controls__item.plyr__time,
-        .plyr__controls .plyr__controls__item.plyr__menu,
-        .plyr__controls .plyr__controls__item.plyr__volume {
-            /* visible but without extra labels */
-        }
-        /* force no text or labels outside controls */
-        .plyr__menu__container .plyr__control[role="menuitem"] .plyr__menu__value {
-            color: #fff !important;
-        }
-        /* keep everything minimal – no extra text */
-    </style>
-</head>
-<body>
-    <div class="player-wrapper">
-        <!-- Plyr video element – no text, only player -->
-        <video id="foxPlayer" playsinline crossorigin>
-            <source src="https://leaf.highfly.dev/m3u/now-sky-sports-cricket/live.m3u8" type="application/vnd.apple.mpegurl" />
-            <!-- fallback (in case m3u8 not supported) – but plyr handles -->
-            <p>Your browser does not support HLS. Please use a modern browser.</p>
-        </video>
-    </div>
+ 
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>FIFA WORLD CUP 2026</title>     
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    <!-- Plyr JS + HLS (for m3u8) -->
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-    <!-- HLS.js for cross-browser m3u8 playback (optional but robust) -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.17/dist/hls.min.js"></script>
-    
-    <script>
-        (function() {
-            // Ensure full page, no text, only player.
-            const video = document.getElementById('foxPlayer');
-            
-            // --- HLS setup for m3u8 (most reliable) ---
-            if (Hls.isSupported()) {
-                const hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                });
-                hls.loadSource('https://live.talkoraai.com/match/hls?t=pIOibCI2TslUY2JvKxXp5depe30ty-saBvIkNd28K6wgafNEaOcdfAlhgzePlQ4L6m7bgW-9_e886iKJ0jaYro3vn4vaNLpIeBi0fz8coNNj6ZJTyjgPIePFAuVHHWKrG_CIbKf2V16U4kecY4UhidYktJRU95-xPCe4MSvDVixQ3uSgTx_x2cD_dbx4KYxXbYO1n5pp4aVaUMEwhC0haKBLcOAgvGfREJcPph1GPTuno1eVpaPDSYfGKSDOQoV9-Z65044Z-1DorEpiHpkyu7joQSsbbQ');
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.warn('Autoplay prevented:', e));
-                });
-                // fallback if HLS fails
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                // try to recover
-                                hls.startLoad();
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                // cannot recover
-                                break;
-                        }
-                    }
-                });
-            } 
-            // fallback: native HLS (Safari / iOS)
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = 'https://live.talkoraai.com/match/hls?t=pIOibCI2TslUY2JvKxXp5depe30ty-saBvIkNd28K6wgafNEaOcdfAlhgzePlQ4L6m7bgW-9_e886iKJ0jaYro3vn4vaNLpIeBi0fz8coNNj6ZJTyjgPIePFAuVHHWKrG_CIbKf2V16U4kecY4UhidYktJRU95-xPCe4MSvDVixQ3uSgTx_x2cD_dbx4KYxXbYO1n5pp4aVaUMEwhC0haKBLcOAgvGfREJcPph1GPTuno1eVpaPDSYfGKSDOQoV9-Z65044Z-1DorEpiHpkyu7joQSsbbQ';
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.warn('Autoplay blocked:', e));
-                });
-            } else {
-                // if nothing works, show minimal message (but still no extra text)
-                console.warn('HLS not supported');
-            }
+  gtag('config', 'G-FMP9REY96D');
+</script>
+  <style>  
+   * { margin: 0; padding: 0; box-sizing: border-box; }  
+    html, body {  
+      background: #000;  
+      height: 100vh;  
+      width: 100vw;  
+      overflow: hidden;  
+      font-family: system-ui, -apple-system, sans-serif;  
+    }  
+    .shaka-video-container {  
+      position: absolute;  
+      inset: 0;  
+      width: 100%;  
+      height: 100%;  
+    }  
+    video {  
+      width: 100%;  
+      height: 100%;  
+      background: #000;  
+      object-fit: contain;  
+    }  
+    .shaka-spinner-container,  
+    .shaka-spinner,  
+    .shaka-spinner-svg {  
+      display: none !important;  
+      visibility: hidden !important;  
+      opacity: 0 !important;  
+    }  
+  </style>  
+</head>  
 
-            // --- Initialize Plyr with premium red progress bar & quality selector ---
-            const player = new Plyr(video, {
-                // Full UI with quality selector (settings)
-                controls: [
-                    'play-large',       // big play button
-                    'play',             // play/pause
-                    'progress',         // premium red progress bar
-                    'current-time',     // time display (minimal, but we keep)
-                    'duration',
-                    'mute',
-                    'volume',
-                    'settings',         // ⚙️ includes quality selector
-                    'fullscreen'
-                ],
-                // Show quality options if available (via HLS or native)
-                quality: {
-                    default: 0,         // auto
-                    options: [720, 540, 480, 360, 240],
-                    forced: false,
-                    onChange: (quality) => {
-                        // quality change logic (hls handles it)
-                        if (Hls.isSupported() && window.hlsInstance) {
-                            // Not needed, but we keep for completeness
-                        }
-                    }
-                },
-                // i18n: remove any extra text labels (but we keep minimal)
-                i18n: {
-                    play: 'Play',
-                    pause: 'Pause',
-                    mute: 'Mute',
-                    unmute: 'Unmute',
-                    settings: 'Settings',
-                    enterFullscreen: 'Fullscreen',
-                    exitFullscreen: 'Exit fullscreen',
-                    speed: 'Speed',
-                    normal: 'Normal',
-                    quality: 'Quality',
-                    loop: 'Loop',
-                },
-                // display settings: no logos, no extra text
-                logo: false,
-                tooltips: false,      // no tooltips with text
-                keyboard: true,
-                autoplay: true,       // attempt autoplay
-                blankVideo: '',
-                // hide controls after idle (clean)
-                hideControls: false,  // keep them visible for premium feel
-                resetOnEnd: false,
-                ratio: '16:9',        // fallback but we use 100vh/100vw
-                fullscreen: { enabled: true, fallback: true },
-                storage: { enabled: false }, // no local storage text
-                // red progress bar is fully customized via CSS
-            });
-
-            // Ensure that the player fills the container, no extra margins
-            // Plyr handles responsive, but we enforce 100% size.
-            const container = player.elements.container;
-            if (container) {
-                container.style.width = '100%';
-                container.style.height = '100%';
-            }
-
-            // Force a resize after load to avoid weird aspect ratio
-            window.addEventListener('resize', function() {
-                if (player) {
-                    player.elements.container.style.width = '100%';
-                    player.elements.container.style.height = '100%';
-                }
-            });
-
-            // Expose player to console for debugging (optional)
-            window.player = player;
-
-            // Clean up any residual text that might appear (extra safety)
-            // but with plyr it's clean.
-
-            // If hls instance is used, attach quality options from manifest
-            if (Hls.isSupported()) {
-                const hlsInstance = video.hlsInstance || hls; // store reference
-                window.hlsInstance = hlsInstance;
-                // listen for level switch to update quality UI (if needed)
-                hlsInstance.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {
-                    // internal quality change – plyr UI updates automatically
-                });
-            }
-        })();
-    </script>
+ 
+  
+  <body>  
+  <div class="shaka-video-container" data-shaka-player>  
+    <video autoplay playsinline preload="metadata" poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg"></video>  
+  </div>  
+  
+  <script>  
+    document.addEventListener('DOMContentLoaded', async () => {  
+      shaka.polyfill.installAll();  
+  
+      if (!shaka.Player.isBrowserSupported()) {  
+        console.error('Browser not supported');  
+        return;  
+      }  
+  
+      const video = document.querySelector('video');  
+      const player = new shaka.Player();  
+      await player.attach(video);  
+  
+      const container = document.querySelector('.shaka-video-container');  
+      const ui = new shaka.ui.Overlay(player, container, video);  
+  
+      ui.configure({  
+        controlPanelElements: [  
+          'play_pause', 'time_and_duration', 'mute', 'volume',  
+          'spacer', 'language', 'captions', 'picture_in_picture',  
+          'quality', 'fullscreen'  
+        ],  
+        volumeBarColors: {  
+  base: 'rgba(0, 136, 255, 0.3)',  
+  level: 'rgb(0, 136, 255)'  
+},  
+seekBarColors: {
+  base: 'rgba(90, 0, 0, 0.3)',
+  buffered: 'rgba(120, 0, 0, 0.6)',
+  played: 'rgb(170, 0, 0)'
+}
+      });  
+  
+   
+      let drmConfig = {  
+        clearKeys: {  
+          "34d9aa9c9437b91d9235b62cbe5ce551":
+ "6851a07451382c5eadffe9cb7a130440"  
+        }  
+      };  
+  
+      let streamUrl = "https://a96aivottlinear-a.akamaihd.net/OTTB/pdx-nitro/live/clients/dash/enc/va142ya1td/out/v1/aae3c310bf7446e9a8dd88ed7de5b1ee/cenc.mpd";  
+  
+      player.configure({  
+        drm: drmConfig,  
+        streaming: {  
+          lowLatencyMode: true,  
+          bufferingGoal: 15,  
+          rebufferingGoal: 2,  
+          bufferBehind: 15,  
+          retryParameters: {  
+            timeout: 10000,  
+            maxAttempts: 5,  
+            baseDelay: 300,  
+            backoffFactor: 1.2  
+          },  
+          segmentRequestTimeout: 8000,  
+          segmentPrefetchLimit: 2,  
+          useNativeHlsOnSafari: true  
+        },  
+        manifest: {  
+          retryParameters: {  
+            timeout: 8000,  
+            maxAttempts: 3  
+          }  
+        }  
+      });  
+  
+      player.addEventListener('error', (event) => {  
+        console.error('Shaka Player Error:', event.detail);  
+      });  
+  
+      try {  
+        await player.load(streamUrl);  
+        console.log("Stream loaded successfully");  
+      } catch (error) {  
+        console.error('Load error:', error);  
+      }  
+    });  
+  </script>  
+  </body>  
 <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-</body>
 </html>
