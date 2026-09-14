@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Fox Cricket</title>
+  <title>Fox Cricket · always pause first, then resume</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
   <meta name="referrer" content="no-referrer"/>
 
@@ -160,10 +160,11 @@
       const UNMUTE_ICON = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
 
       const MUTE_STORAGE_KEY = "foxCricketMuted";
+      const PLAYBACK_STORAGE_KEY = "foxCricketHasVisited";
       const source = "https://play.boxcast.com/p/yfrdwzjmwthp93smej8w/v/all-byteranges-ext.m3u8?Expires=1789526016&Signature=i18U8FQDLLqz3zubiP8egXk8lcI3Sv2KHV7OHo2rtLBT0GfFGsZI4ikASs9xa1CzOu7hPhtRQc9IvEn-NdZ7zXChDPOHHkVnM1BfzzYWPfeBSJCeUOUUY00zjqbxhWwScwLbKjw5Bpnvj8I51sQQbRrs9zFwHVwWvwHs4AHQgDvvQYjwJzQWOhOOLg58ckTxb0oLNrDtM1azjbjEsvGLI~DgBR7u4cX~B1i3xjuqt0bFNMv5K24kNMtsjOe2SSv-MZBla1PulkZMIstsvQHbzxpGT4l0pTPYIhWycsxHw1jRLeejxrNDXE5WoIqgO0YdR~DlU3HJWq9rjPneLAArAQ__&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA";
 
       const defaultOptions = {
-        autoplay: true,
+        autoplay: false,
         clickToPlay: true,
         controls: [
           'play', 'rewind', 'fast-forward', 'progress', 'current-time',
@@ -173,7 +174,23 @@
       };
 
       let player;
-      let userPaused = false; // tracks whether the user *chose* to pause
+      let userPaused = true; // starts paused — first visit must be paused
+      let isFirstVisit = true;
+
+      // --- Determine if user has visited before (via localStorage) ---
+      function hasVisitedBefore() {
+        try {
+          return localStorage.getItem(PLAYBACK_STORAGE_KEY) === "true";
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function markVisited() {
+        try {
+          localStorage.setItem(PLAYBACK_STORAGE_KEY, "true");
+        } catch (e) {}
+      }
 
       // --- Saved mute preference (localStorage cache) ---
       function getSavedMutePref() {
@@ -201,7 +218,6 @@
         container.classList.remove("hide-controls");
         clearTimeout(controlsHideTimer);
         controlsHideTimer = setTimeout(() => {
-          // don't hide while paused, so the user can still see the play button
           if (!video.paused) {
             container.classList.add("hide-controls");
           }
@@ -228,14 +244,19 @@
           } : {}
         });
 
-        // Apply saved mute preference right away
-        const savedMuted = getSavedMutePref();
-        video.muted = savedMuted;
-        if (!savedMuted) {
+        // --- Always start paused, first time ---
+        // video is already paused because autoplay: false, but ensure it.
+        video.pause();
+        video.muted = getSavedMutePref();
+        if (!video.muted) {
           video.volume = 1;
         }
 
-        // start the controls auto-hide timer
+        // Set the center icon to play (since paused)
+        centerIcon.innerHTML = PLAY_ICON;
+        // show center button immediately (stays visible while paused)
+        centerToggle.classList.add('visible');
+        // start the controls auto-hide timer (will not hide while paused)
         showControlsAndResetTimer();
 
         // --- Frozen frame instead of a black flash while buffering/resuming ---
@@ -257,21 +278,21 @@
           freezeRAF = requestAnimationFrame(keepCapturing);
         }
         function showFreeze() {
-          captureFrame(); // grab the very last available frame first
+          captureFrame();
           freezeCanvas.style.display = 'block';
         }
         function hideFreeze() {
           freezeCanvas.style.display = 'none';
         }
 
-        keepCapturing(); // continuously refresh the snapshot while playing
+        keepCapturing();
 
         player.on('waiting', showFreeze);
         player.on('stalled', showFreeze);
         player.on('seeking', showFreeze);
         player.on('playing', hideFreeze);
 
-        // --- Center play/pause button, driven entirely by Plyr's own events ---
+        // --- Center play/pause button ---
         let hideTimer;
 
         function showCenter() {
@@ -286,39 +307,55 @@
         centerToggle.addEventListener('click', () => {
           player.togglePlay();
           showControlsAndResetTimer();
+          // Mark visited when user interacts with play
+          markVisited();
         });
 
         player.on('pause', () => {
           userPaused = true;
           centerIcon.innerHTML = PLAY_ICON;
           clearTimeout(hideTimer);
-          showCenter(); // stay visible while paused
-          showControlsAndResetTimer(); // keep controls visible while paused
+          showCenter();
+          showControlsAndResetTimer();
         });
 
         player.on('play', () => {
           userPaused = false;
           centerIcon.innerHTML = PAUSE_ICON;
-          showCenterBriefly(); // flash then fade while playing
+          showCenterBriefly();
           showControlsAndResetTimer();
+          // Mark visited as soon as playback starts
+          markVisited();
         });
 
-        // --- Mute state: cache it and show the indicator whenever it changes ---
+        // --- Mute state ---
         video.addEventListener('volumechange', () => {
           saveMutePref(video.muted);
           flashMuteIndicator(video.muted);
         });
 
-        // 🔁 AUTO RESUME — only kicks in on unexpected stalls,
-        // never overrides a user-initiated pause (so Plyr's pause/resume works normally)
+        // 🔁 AUTO RESUME — only if this is *not* the first visit.
+        // On first visit we intentionally keep it paused.
+        if (hasVisitedBefore()) {
+          // Not first visit → resume playback automatically after a small delay
+          setTimeout(() => {
+            video.play().catch(() => {});
+          }, 300);
+        } else {
+          // First visit → ensure it's paused, no auto‑play
+          video.pause();
+          // Mark as visited so next time it will auto resume
+          markVisited();
+        }
+
+        // Also auto‑resume on stalls (but not on user pause)
         setInterval(() => {
-          if (video.paused && !userPaused && video.readyState > 2) {
+          if (video.paused && !userPaused && video.readyState > 2 && hasVisitedBefore()) {
             video.play().catch(() => {});
           }
         }, 3000);
 
-        // 🔊 AUTO UNMUTE ON FIRST INTERACTION, but only if the saved
-        // preference isn't explicitly "muted" — respects the cached choice.
+        // 🔊 AUTO UNMUTE ON FIRST INTERACTION if preference isn't muted
         const unmute = () => {
           if (!getSavedMutePref()) {
             video.muted = false;
@@ -342,7 +379,13 @@
 
         hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
           const availableQualities = data.levels.map(l => l.height).sort((a, b) => b - a);
-          video.play().catch(() => {});
+          // On first visit: do NOT play, keep paused
+          if (!hasVisitedBefore()) {
+            video.pause();
+          } else {
+            // Returning visitor: auto-resume after setup
+            setTimeout(() => video.play().catch(() => {}), 200);
+          }
           setupPlayer(hls, availableQualities);
         });
 
@@ -356,7 +399,11 @@
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
         video.src = source;
         video.addEventListener("loadedmetadata", () => {
-          video.play().catch(() => {});
+          if (!hasVisitedBefore()) {
+            video.pause();
+          } else {
+            setTimeout(() => video.play().catch(() => {}), 200);
+          }
           setupPlayer(null);
         });
       }
