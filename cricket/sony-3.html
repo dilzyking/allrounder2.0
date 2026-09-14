@@ -1,60 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Full Page Player – No Gap</title>
+  <title>Fox Cricket</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="referrer" content="no-referrer"/>
+
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <!-- Plyr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
+
   <style>
-    /* Reset all margins, paddings, and gaps */
-    * {
+    :root {
+      --plyr-color-main: #e50914;
+    }
+    body {
+      background-color: #000;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      overflow: hidden;
     }
-
     html, body {
+      height: 100%;
+      width: 100%;
+    }
+    .video-container {
+      position: relative;
       width: 100%;
       height: 100%;
-      overflow: hidden;          /* prevent scrollbars from any tiny overflow */
-      background-color: #000;    /* black background for seamless edges */
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    /* Full-page iframe container – fills entire viewport */
-    .player-wrapper {
-      position: fixed;           /* fix to viewport, ignores any body flow */
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       background: #000;
     }
+    .plyr {
+      height: 100%;
+      width: 100%;
+    }
 
-    /* The iframe itself – stretches to fill wrapper completely,
-       no border, no margin, no padding, no gaps */
-    .player-wrapper iframe {
-      display: block;            /* remove inline element gap */
+    /* --- Center play/pause button --- */
+    .center-toggle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(229, 9, 20, 0.85);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      z-index: 20;
+    }
+    .center-toggle.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .center-toggle:active {
+      transform: translate(-50%, -50%) scale(0.92);
+    }
+    .center-toggle svg {
+      width: 32px;
+      height: 32px;
+      fill: #fff;
+    }
+
+    /* --- Frozen frame, shown instead of a black flash while buffering --- */
+    #freezeFrame {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      border: 0;
-      margin: 0;
-      padding: 0;
-      /* aspect-ratio is intentionally removed so iframe fills 
-         exactly 100% height/width of wrapper (no letterboxing) */
+      object-fit: contain;
+      display: none;
+      z-index: 5;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div class="player-wrapper">
-    <iframe
-      src="https://fancode.dillzycreations.workers.dev/"
-      sandbox="allow-scripts allow-same-origin"
-      referrerpolicy="no-referrer"
-      allow="encrypted-media; fullscreen"
-      allowfullscreen
-      title="Full page video player"
-    ></iframe>
+  <div class="video-container">
+    <video autoplay playsinline id="player" controls preload="metadata"></video>
+    <canvas id="freezeFrame"></canvas>
+    <button class="center-toggle" id="centerToggle" aria-label="Play or pause">
+      <svg id="centerIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
   </div>
-<script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const video = document.getElementById("player");
+      const centerToggle = document.getElementById("centerToggle");
+      const centerIcon = document.getElementById("centerIcon");
+      const PLAY_ICON = '<path d="M8 5v14l11-7z"/>';
+      const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+      const source = "https://play.boxcast.com/p/yfrdwzjmwthp93smej8w/v/all-byteranges-ext.m3u8?Expires=1789526016&Signature=i18U8FQDLLqz3zubiP8egXk8lcI3Sv2KHV7OHo2rtLBT0GfFGsZI4ikASs9xa1CzOu7hPhtRQc9IvEn-NdZ7zXChDPOHHkVnM1BfzzYWPfeBSJCeUOUUY00zjqbxhWwScwLbKjw5Bpnvj8I51sQQbRrs9zFwHVwWvwHs4AHQgDvvQYjwJzQWOhOOLg58ckTxb0oLNrDtM1azjbjEsvGLI~DgBR7u4cX~B1i3xjuqt0bFNMv5K24kNMtsjOe2SSv-MZBla1PulkZMIstsvQHbzxpGT4l0pTPYIhWycsxHw1jRLeejxrNDXE5WoIqgO0YdR~DlU3HJWq9rjPneLAArAQ__&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA";
+
+      const defaultOptions = {
+        autoplay: true,
+        clickToPlay: true,
+        controls: [
+          'play', 'rewind', 'fast-forward', 'progress', 'current-time',
+          'mute', 'volume', 'settings', 'fullscreen'
+        ],
+        settings: ['quality']
+      };
+
+      let player;
+      let userPaused = false; // tracks whether the user *chose* to pause
+
+      // Try to autoplay with sound on. Browsers only allow this if the user
+      // has already interacted with the page/site; if blocked, fall back to
+      // muted autoplay and unmute on the first tap/click.
+      function attemptAutoplay() {
+        video.muted = false;
+        video.volume = 1;
+        const p = video.play();
+        if (p && typeof p.catch === 'function') {
+          p.catch(() => {
+            video.muted = true;
+            video.play().catch(() => {});
+          });
+        }
+      }
+
+      function setupPlayer(hls, qualities = []) {
+        player = new Plyr(video, {
+          ...defaultOptions,
+          quality: qualities.length ? {
+            default: qualities[0],
+            options: qualities,
+            forced: true,
+            onChange: q => {
+              hls.levels.forEach((level, index) => {
+                if (level.height === q) {
+                  hls.currentLevel = index;
+                }
+              });
+            }
+          } : {}
+        });
+
+        // --- Frozen frame instead of a black flash while buffering/resuming ---
+        const freezeCanvas = document.getElementById('freezeFrame');
+        const freezeCtx = freezeCanvas.getContext('2d');
+        let freezeRAF;
+
+        function captureFrame() {
+          if (video.videoWidth && video.videoHeight) {
+            freezeCanvas.width = video.videoWidth;
+            freezeCanvas.height = video.videoHeight;
+            try {
+              freezeCtx.drawImage(video, 0, 0, freezeCanvas.width, freezeCanvas.height);
+            } catch (e) {}
+          }
+        }
+        function keepCapturing() {
+          captureFrame();
+          freezeRAF = requestAnimationFrame(keepCapturing);
+        }
+        function showFreeze() {
+          captureFrame(); // grab the very last available frame first
+          freezeCanvas.style.display = 'block';
+        }
+        function hideFreeze() {
+          freezeCanvas.style.display = 'none';
+        }
+
+        keepCapturing(); // continuously refresh the snapshot while playing
+
+        player.on('waiting', showFreeze);
+        player.on('stalled', showFreeze);
+        player.on('seeking', showFreeze);
+        player.on('playing', hideFreeze);
+
+        // --- Center play/pause button, driven entirely by Plyr's own events ---
+        let hideTimer;
+
+        function showCenter() {
+          centerToggle.classList.add('visible');
+        }
+        function showCenterBriefly() {
+          showCenter();
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(() => centerToggle.classList.remove('visible'), 700);
+        }
+
+        centerToggle.addEventListener('click', () => player.togglePlay());
+
+        player.on('pause', () => {
+          userPaused = true;
+          centerIcon.innerHTML = PLAY_ICON;
+          clearTimeout(hideTimer);
+          showCenter(); // stay visible while paused
+        });
+
+        player.on('play', () => {
+          userPaused = false;
+          centerIcon.innerHTML = PAUSE_ICON;
+          showCenterBriefly(); // flash then fade while playing
+        });
+
+        // 🔁 AUTO RESUME — only kicks in on unexpected stalls,
+        // never overrides a user-initiated pause (so Plyr's pause/resume works normally)
+        setInterval(() => {
+          if (video.paused && !userPaused && video.readyState > 2) {
+            video.play().catch(() => {});
+          }
+        }, 3000);
+
+        // 🔊 AUTO UNMUTE (on first interaction)
+        const unmute = () => {
+          video.muted = false;
+          video.volume = 1;
+          document.removeEventListener("click", unmute);
+          document.removeEventListener("touchstart", unmute);
+        };
+
+        document.addEventListener("click", unmute);
+        document.addEventListener("touchstart", unmute);
+      }
+
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          autoStartLoad: true
+        });
+
+        hls.loadSource(source);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+          const availableQualities = data.levels.map(l => l.height).sort((a, b) => b - a);
+          attemptAutoplay();
+          setupPlayer(hls, availableQualities);
+        });
+
+        // 🔥 AUTO RECOVER ON ERROR
+        hls.on(Hls.Events.ERROR, function (_, data) {
+          if (data.fatal) {
+            hls.startLoad();
+          }
+        });
+
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = source;
+        video.addEventListener("loadedmetadata", () => {
+          attemptAutoplay();
+          setupPlayer(null);
+        });
+      }
+    });
+  </script>
+  <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
 </body>
 </html>
