@@ -93,24 +93,73 @@
       z-index: 5;
       pointer-events: none;
     }
+
+    /* --- Mute / unmute indicator --- */
+    .mute-indicator {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 25;
+    }
+    .mute-indicator.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .mute-indicator svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+
+    /* --- Auto-hide controls after inactivity --- */
+    .video-container.hide-controls .plyr__controls {
+      opacity: 0 !important;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .plyr__controls {
+      transition: opacity 0.4s ease;
+    }
   </style>
 </head>
 <body>
-  <div class="video-container">
-    <video autoplay playsinline id="player" controls preload="metadata"></video>
+  <div class="video-container" id="videoContainer">
+    <video autoplay playsinline muted id="player" controls preload="metadata"></video>
     <canvas id="freezeFrame"></canvas>
     <button class="center-toggle" id="centerToggle" aria-label="Play or pause">
       <svg id="centerIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </button>
+    <div class="mute-indicator" id="muteIndicator">
+      <svg id="muteIcon" viewBox="0 0 24 24"></svg>
+    </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const video = document.getElementById("player");
+      const container = document.getElementById("videoContainer");
       const centerToggle = document.getElementById("centerToggle");
       const centerIcon = document.getElementById("centerIcon");
+      const muteIndicator = document.getElementById("muteIndicator");
+      const muteIcon = document.getElementById("muteIcon");
+
       const PLAY_ICON = '<path d="M8 5v14l11-7z"/>';
       const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+      const MUTE_ICON = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+      const UNMUTE_ICON = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+
+      const MUTE_STORAGE_KEY = "foxCricketMuted";
       const source = "https://play.boxcast.com/p/yfrdwzjmwthp93smej8w/v/all-byteranges-ext.m3u8?Expires=1789526016&Signature=i18U8FQDLLqz3zubiP8egXk8lcI3Sv2KHV7OHo2rtLBT0GfFGsZI4ikASs9xa1CzOu7hPhtRQc9IvEn-NdZ7zXChDPOHHkVnM1BfzzYWPfeBSJCeUOUUY00zjqbxhWwScwLbKjw5Bpnvj8I51sQQbRrs9zFwHVwWvwHs4AHQgDvvQYjwJzQWOhOOLg58ckTxb0oLNrDtM1azjbjEsvGLI~DgBR7u4cX~B1i3xjuqt0bFNMv5K24kNMtsjOe2SSv-MZBla1PulkZMIstsvQHbzxpGT4l0pTPYIhWycsxHw1jRLeejxrNDXE5WoIqgO0YdR~DlU3HJWq9rjPneLAArAQ__&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA";
 
       const defaultOptions = {
@@ -126,20 +175,41 @@
       let player;
       let userPaused = false; // tracks whether the user *chose* to pause
 
-      // Try to autoplay with sound on. Browsers only allow this if the user
-      // has already interacted with the page/site; if blocked, fall back to
-      // muted autoplay and unmute on the first tap/click.
-      function attemptAutoplay() {
-        video.muted = false;
-        video.volume = 1;
-        const p = video.play();
-        if (p && typeof p.catch === 'function') {
-          p.catch(() => {
-            video.muted = true;
-            video.play().catch(() => {});
-          });
-        }
+      // --- Saved mute preference (localStorage cache) ---
+      function getSavedMutePref() {
+        const stored = localStorage.getItem(MUTE_STORAGE_KEY);
+        // default to muted (true) so autoplay is allowed on first-ever visit
+        return stored === null ? true : stored === "true";
       }
+      function saveMutePref(isMuted) {
+        localStorage.setItem(MUTE_STORAGE_KEY, isMuted ? "true" : "false");
+      }
+
+      let muteIndicatorTimer;
+      function flashMuteIndicator(isMuted) {
+        muteIcon.innerHTML = isMuted ? MUTE_ICON : UNMUTE_ICON;
+        muteIndicator.classList.add("visible");
+        clearTimeout(muteIndicatorTimer);
+        muteIndicatorTimer = setTimeout(() => {
+          muteIndicator.classList.remove("visible");
+        }, 1200);
+      }
+
+      // --- Controls auto-hide after 5s of inactivity ---
+      let controlsHideTimer;
+      function showControlsAndResetTimer() {
+        container.classList.remove("hide-controls");
+        clearTimeout(controlsHideTimer);
+        controlsHideTimer = setTimeout(() => {
+          // don't hide while paused, so the user can still see the play button
+          if (!video.paused) {
+            container.classList.add("hide-controls");
+          }
+        }, 5000);
+      }
+      ["mousemove", "mousedown", "touchstart", "click", "keydown"].forEach(evt => {
+        container.addEventListener(evt, showControlsAndResetTimer, { passive: true });
+      });
 
       function setupPlayer(hls, qualities = []) {
         player = new Plyr(video, {
@@ -157,6 +227,16 @@
             }
           } : {}
         });
+
+        // Apply saved mute preference right away
+        const savedMuted = getSavedMutePref();
+        video.muted = savedMuted;
+        if (!savedMuted) {
+          video.volume = 1;
+        }
+
+        // start the controls auto-hide timer
+        showControlsAndResetTimer();
 
         // --- Frozen frame instead of a black flash while buffering/resuming ---
         const freezeCanvas = document.getElementById('freezeFrame');
@@ -203,19 +283,30 @@
           hideTimer = setTimeout(() => centerToggle.classList.remove('visible'), 700);
         }
 
-        centerToggle.addEventListener('click', () => player.togglePlay());
+        centerToggle.addEventListener('click', () => {
+          player.togglePlay();
+          showControlsAndResetTimer();
+        });
 
         player.on('pause', () => {
           userPaused = true;
           centerIcon.innerHTML = PLAY_ICON;
           clearTimeout(hideTimer);
           showCenter(); // stay visible while paused
+          showControlsAndResetTimer(); // keep controls visible while paused
         });
 
         player.on('play', () => {
           userPaused = false;
           centerIcon.innerHTML = PAUSE_ICON;
           showCenterBriefly(); // flash then fade while playing
+          showControlsAndResetTimer();
+        });
+
+        // --- Mute state: cache it and show the indicator whenever it changes ---
+        video.addEventListener('volumechange', () => {
+          saveMutePref(video.muted);
+          flashMuteIndicator(video.muted);
         });
 
         // 🔁 AUTO RESUME — only kicks in on unexpected stalls,
@@ -226,10 +317,13 @@
           }
         }, 3000);
 
-        // 🔊 AUTO UNMUTE (on first interaction)
+        // 🔊 AUTO UNMUTE ON FIRST INTERACTION, but only if the saved
+        // preference isn't explicitly "muted" — respects the cached choice.
         const unmute = () => {
-          video.muted = false;
-          video.volume = 1;
+          if (!getSavedMutePref()) {
+            video.muted = false;
+            video.volume = 1;
+          }
           document.removeEventListener("click", unmute);
           document.removeEventListener("touchstart", unmute);
         };
@@ -248,7 +342,7 @@
 
         hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
           const availableQualities = data.levels.map(l => l.height).sort((a, b) => b - a);
-          attemptAutoplay();
+          video.play().catch(() => {});
           setupPlayer(hls, availableQualities);
         });
 
@@ -262,13 +356,12 @@
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
         video.src = source;
         video.addEventListener("loadedmetadata", () => {
-          attemptAutoplay();
+          video.play().catch(() => {});
           setupPlayer(null);
         });
       }
     });
   </script>
   <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
 </body>
 </html>
