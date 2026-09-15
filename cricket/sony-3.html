@@ -1,45 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Player</title>
-  <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
+  <title>Fox Cricket · always pause first, then resume</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="referrer" content="no-referrer"/>
+
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <!-- Plyr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
+
   <style>
-    * {
+    :root {
+      --plyr-color-main: #e50914;
+    }
+    body {
+      background-color: #000;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #000000;
       overflow: hidden;
     }
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    .plyr {
+      height: 100%;
+      width: 100%;
+    }
 
-    #video {
-      width: 100% !important;
-      height: 100% !important;
+    /* --- Center play/pause button --- */
+    .center-toggle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(229, 9, 20, 0.85);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      z-index: 20;
+    }
+    .center-toggle.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .center-toggle:active {
+      transform: translate(-50%, -50%) scale(0.92);
+    }
+    .center-toggle svg {
+      width: 32px;
+      height: 32px;
+      fill: #fff;
+    }
+
+    /* --- Frozen frame, shown instead of a black flash while buffering --- */
+    #freezeFrame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* --- Mute / unmute indicator --- */
+    .mute-indicator {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 25;
+    }
+    .mute-indicator.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .mute-indicator svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+
+    /* --- Auto-hide controls after inactivity --- */
+    .video-container.hide-controls .plyr__controls {
+      opacity: 0 !important;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .plyr__controls {
+      transition: opacity 0.4s ease;
     }
   </style>
 </head>
 <body>
-
-  <div id="video"></div>
+  <div class="video-container" id="videoContainer">
+    <video autoplay playsinline muted id="player" controls preload="metadata"></video>
+    <canvas id="freezeFrame"></canvas>
+    <button class="center-toggle" id="centerToggle" aria-label="Play or pause">
+      <svg id="centerIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <div class="mute-indicator" id="muteIndicator">
+      <svg id="muteIcon" viewBox="0 0 24 24"></svg>
+    </div>
+  </div>
 
   <script>
-    jwplayer("video").setup({
-      file: "https://play.boxcast.com/p/psnzgzfg4vgkvej2elbb/v/all-byteranges-ext.m3u8?Expires=1789591552&Signature=cuW1HK7EVNhLVHrgt0ExuR~EVs1PmVnCZnaPrXKN4rBPMqaIiMNpDGdM-fxzTTohO2uU-IUYzxRt5uumDWPhHiX~HrEOggXrvLP2RqToQ~9N4yYegn1uFG5L~P4OIw7G4RkvyYAaRjId~m-GAwerwxSEGpeJoN7OUQrTzeWyi-xsB9N~ljzEQT4GNm9hF~IIP-FpdOUmlb8lON~YCXmKjwsGuMIR2RI0o97XEbCBW3Emz2eNZubVx6axtJePHZVQvoGZefzHsJRLjcbdnS0X~ac6r4W~sbn4AGRPrjfowW7nPPKMtNLeOXwrrOQF8my5vNuXJHLLpaV02Ohyh8ZWAg__&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA",
-      width: "100%",
-      height: "100%",
-      autostart: true,
-      mute: false
+    document.addEventListener("DOMContentLoaded", function () {
+      const video = document.getElementById("player");
+      const container = document.getElementById("videoContainer");
+      const centerToggle = document.getElementById("centerToggle");
+      const centerIcon = document.getElementById("centerIcon");
+      const muteIndicator = document.getElementById("muteIndicator");
+      const muteIcon = document.getElementById("muteIcon");
+
+      const PLAY_ICON = '<path d="M8 5v14l11-7z"/>';
+      const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+      const MUTE_ICON = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+      const UNMUTE_ICON = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+
+      const MUTE_STORAGE_KEY = "foxCricketMuted";
+      const PLAYBACK_STORAGE_KEY = "foxCricketHasVisited";
+      const source = "https://play.boxcast.com/p/psnzgzfg4vgkvej2elbb/v/all-byteranges-ext.m3u8?Expires=1789591552&Signature=cuW1HK7EVNhLVHrgt0ExuR~EVs1PmVnCZnaPrXKN4rBPMqaIiMNpDGdM-fxzTTohO2uU-IUYzxRt5uumDWPhHiX~HrEOggXrvLP2RqToQ~9N4yYegn1uFG5L~P4OIw7G4RkvyYAaRjId~m-GAwerwxSEGpeJoN7OUQrTzeWyi-xsB9N~ljzEQT4GNm9hF~IIP-FpdOUmlb8lON~YCXmKjwsGuMIR2RI0o97XEbCBW3Emz2eNZubVx6axtJePHZVQvoGZefzHsJRLjcbdnS0X~ac6r4W~sbn4AGRPrjfowW7nPPKMtNLeOXwrrOQF8my5vNuXJHLLpaV02Ohyh8ZWAg__&Key-Pair-Id=APKAJ7GUCBQUK6NTWZCA";
+
+      const defaultOptions = {
+        autoplay: false,
+        clickToPlay: true,
+        controls: [
+          'play', 'rewind', 'fast-forward', 'progress', 'current-time',
+          'mute', 'volume', 'settings', 'fullscreen'
+        ],
+        settings: ['quality']
+      };
+
+      let player;
+      let userPaused = true; // starts paused — first visit must be paused
+      let isFirstVisit = true;
+
+      // --- Determine if user has visited before (via localStorage) ---
+      function hasVisitedBefore() {
+        try {
+          return localStorage.getItem(PLAYBACK_STORAGE_KEY) === "true";
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function markVisited() {
+        try {
+          localStorage.setItem(PLAYBACK_STORAGE_KEY, "true");
+        } catch (e) {}
+      }
+
+      // --- Saved mute preference (localStorage cache) ---
+      function getSavedMutePref() {
+        const stored = localStorage.getItem(MUTE_STORAGE_KEY);
+        // default to muted (true) so autoplay is allowed on first-ever visit
+        return stored === null ? true : stored === "true";
+      }
+      function saveMutePref(isMuted) {
+        localStorage.setItem(MUTE_STORAGE_KEY, isMuted ? "true" : "false");
+      }
+
+      let muteIndicatorTimer;
+      function flashMuteIndicator(isMuted) {
+        muteIcon.innerHTML = isMuted ? MUTE_ICON : UNMUTE_ICON;
+        muteIndicator.classList.add("visible");
+        clearTimeout(muteIndicatorTimer);
+        muteIndicatorTimer = setTimeout(() => {
+          muteIndicator.classList.remove("visible");
+        }, 1200);
+      }
+
+      // --- Controls auto-hide after 5s of inactivity ---
+      let controlsHideTimer;
+      function showControlsAndResetTimer() {
+        container.classList.remove("hide-controls");
+        clearTimeout(controlsHideTimer);
+        controlsHideTimer = setTimeout(() => {
+          if (!video.paused) {
+            container.classList.add("hide-controls");
+          }
+        }, 5000);
+      }
+      ["mousemove", "mousedown", "touchstart", "click", "keydown"].forEach(evt => {
+        container.addEventListener(evt, showControlsAndResetTimer, { passive: true });
+      });
+
+      function setupPlayer(hls, qualities = []) {
+        player = new Plyr(video, {
+          ...defaultOptions,
+          quality: qualities.length ? {
+            default: qualities[0],
+            options: qualities,
+            forced: true,
+            onChange: q => {
+              hls.levels.forEach((level, index) => {
+                if (level.height === q) {
+                  hls.currentLevel = index;
+                }
+              });
+            }
+          } : {}
+        });
+
+        // --- Always start paused, first time ---
+        // video is already paused because autoplay: false, but ensure it.
+        video.pause();
+        video.muted = getSavedMutePref();
+        if (!video.muted) {
+          video.volume = 1;
+        }
+
+        // Set the center icon to play (since paused)
+        centerIcon.innerHTML = PLAY_ICON;
+        // show center button immediately (stays visible while paused)
+        centerToggle.classList.add('visible');
+        // start the controls auto-hide timer (will not hide while paused)
+        showControlsAndResetTimer();
+
+        // --- Frozen frame instead of a black flash while buffering/resuming ---
+        const freezeCanvas = document.getElementById('freezeFrame');
+        const freezeCtx = freezeCanvas.getContext('2d');
+        let freezeRAF;
+
+        function captureFrame() {
+          if (video.videoWidth && video.videoHeight) {
+            freezeCanvas.width = video.videoWidth;
+            freezeCanvas.height = video.videoHeight;
+            try {
+              freezeCtx.drawImage(video, 0, 0, freezeCanvas.width, freezeCanvas.height);
+            } catch (e) {}
+          }
+        }
+        function keepCapturing() {
+          captureFrame();
+          freezeRAF = requestAnimationFrame(keepCapturing);
+        }
+        function showFreeze() {
+          captureFrame();
+          freezeCanvas.style.display = 'block';
+        }
+        function hideFreeze() {
+          freezeCanvas.style.display = 'none';
+        }
+
+        keepCapturing();
+
+        player.on('waiting', showFreeze);
+        player.on('stalled', showFreeze);
+        player.on('seeking', showFreeze);
+        player.on('playing', hideFreeze);
+
+        // --- Center play/pause button ---
+        let hideTimer;
+
+        function showCenter() {
+          centerToggle.classList.add('visible');
+        }
+        function showCenterBriefly() {
+          showCenter();
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(() => centerToggle.classList.remove('visible'), 700);
+        }
+
+        centerToggle.addEventListener('click', () => {
+          player.togglePlay();
+          showControlsAndResetTimer();
+          // Mark visited when user interacts with play
+          markVisited();
+        });
+
+        player.on('pause', () => {
+          userPaused = true;
+          centerIcon.innerHTML = PLAY_ICON;
+          clearTimeout(hideTimer);
+          showCenter();
+          showControlsAndResetTimer();
+        });
+
+        player.on('play', () => {
+          userPaused = false;
+          centerIcon.innerHTML = PAUSE_ICON;
+          showCenterBriefly();
+          showControlsAndResetTimer();
+          // Mark visited as soon as playback starts
+          markVisited();
+        });
+
+        // --- Mute state ---
+        video.addEventListener('volumechange', () => {
+          saveMutePref(video.muted);
+          flashMuteIndicator(video.muted);
+        });
+
+        // 🔁 AUTO RESUME — only if this is *not* the first visit.
+        // On first visit we intentionally keep it paused.
+        if (hasVisitedBefore()) {
+          // Not first visit → resume playback automatically after a small delay
+          setTimeout(() => {
+            video.play().catch(() => {});
+          }, 300);
+        } else {
+          // First visit → ensure it's paused, no auto‑play
+          video.pause();
+          // Mark as visited so next time it will auto resume
+          markVisited();
+        }
+
+        // Also auto‑resume on stalls (but not on user pause)
+        setInterval(() => {
+          if (video.paused && !userPaused && video.readyState > 2 && hasVisitedBefore()) {
+            video.play().catch(() => {});
+          }
+        }, 3000);
+
+        // 🔊 AUTO UNMUTE ON FIRST INTERACTION if preference isn't muted
+        const unmute = () => {
+          if (!getSavedMutePref()) {
+            video.muted = false;
+            video.volume = 1;
+          }
+          document.removeEventListener("click", unmute);
+          document.removeEventListener("touchstart", unmute);
+        };
+
+        document.addEventListener("click", unmute);
+        document.addEventListener("touchstart", unmute);
+      }
+
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          autoStartLoad: true
+        });
+
+        hls.loadSource(source);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+          const availableQualities = data.levels.map(l => l.height).sort((a, b) => b - a);
+          // On first visit: do NOT play, keep paused
+          if (!hasVisitedBefore()) {
+            video.pause();
+          } else {
+            // Returning visitor: auto-resume after setup
+            setTimeout(() => video.play().catch(() => {}), 200);
+          }
+          setupPlayer(hls, availableQualities);
+        });
+
+        // 🔥 AUTO RECOVER ON ERROR
+        hls.on(Hls.Events.ERROR, function (_, data) {
+          if (data.fatal) {
+            hls.startLoad();
+          }
+        });
+
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = source;
+        video.addEventListener("loadedmetadata", () => {
+          if (!hasVisitedBefore()) {
+            video.pause();
+          } else {
+            setTimeout(() => video.play().catch(() => {}), 200);
+          }
+          setupPlayer(null);
+        });
+      }
     });
   </script>
-  <!-- Ad script added below — no other changes made -->
   <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-<!-- Cloudflare Pages Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a0b257eb72774036a93385f1ead74953"}'></script><!-- Cloudflare Pages Analytics --></body>
+</body>
 </html>
