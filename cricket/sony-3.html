@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TG_@Crizcinsider36</title>
+    <title>TG_@Cricinsider365</title>
 <script>(function(s){s.dataset.zone='11621694',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -164,7 +164,7 @@
 
         /* ========== CONFIG ========== */
         const STREAM_URL =
-            "https://eerajson.pages.dev/fc.m3u8";
+            "https://odd-art-347e.pakivac483-abf.workers.dev/";
 
         const DOM = {
             video: document.getElementById('video'),
@@ -197,7 +197,7 @@
             }
         }
 
-        /* ========== PAUSE/RESUME LOGIC (from original) ========== */
+        /* ========== PAUSE/RESUME LOGIC ========== */
         function setupPauseResumeLogic(video) {
             // Reset userPaused flag on play
             video.addEventListener('play', function() {
@@ -290,26 +290,15 @@
                             }
                         });
 
-                        // ========== KEY CHANGE: Start with pause but unmuted ==========
-                        // First ensure video is unmuted
+                        // Start with pause but unmuted
                         video.muted = false;
-
-                        // Load the stream but don't autoplay - keep it paused
-                        // The video will be paused initially with the big play button visible
-                        // We need to make sure it stays paused after loading
                         video.pause();
 
-                        // Mark as initialized so the auto-resume logic doesn't kick in
                         isInitialized = true;
-
-                        // Hide loading once stream is ready
                         video.addEventListener('loadeddata', hideLoading);
                         setTimeout(hideLoading, 3000);
-
-                        // Setup pause/resume logic
                         setupPauseResumeLogic(video);
 
-                        // Also handle quality changes via Plyr settings
                         plyrInstance.on('qualitychange', (quality) => {
                             // quality is already handled by the onChange above
                         });
@@ -323,7 +312,6 @@
                                 hls.recoverMediaError();
                             } else {
                                 console.warn('Fatal HLS error:', data);
-                                // Try fallback
                                 fallbackToNative(video);
                             }
                         }
@@ -346,11 +334,8 @@
             destroyPlayer();
 
             video.src = STREAM_URL;
-
-            // ========== KEY CHANGE: Start with pause but unmuted ==========
             video.muted = false;
 
-            // Init Plyr without quality settings
             plyrInstance = new Plyr(video, {
                 controls: [
                     'play-large', 'play', 'progress', 'current-time',
@@ -358,15 +343,11 @@
                 ]
             });
 
-            // Keep it paused initially
             video.pause();
-
-            // Mark as initialized
             isInitialized = true;
 
             video.addEventListener('loadeddata', hideLoading);
             setTimeout(hideLoading, 3000);
-
             setupPauseResumeLogic(video);
         }
 
@@ -385,7 +366,7 @@
 
     })();
 </script>
-
 <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
 </body>
 </html>
