@@ -1,17 +1,21 @@
 #EXTM3U
-#EXT-X-VERSION:3
+#EXT-X-VERSION:6
+#EXT-X-INDEPENDENT-SEGMENTS
 
-#EXT-X-STREAM-INF:BANDWIDTH=6000000,RESOLUTION=1920x1080
-https://in-mc-pdlive.fancode.com/mumbai/4247425_english_hls_c77d2adc1321506_1ta-di_h264/1080p.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=6500000,RESOLUTION=1920x1080
+https://in-mc-flive.fancode.com/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/1080p.m3u8?hdntl=Expires=1790134901~_GO=Generated~acl=/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/*~Signature=AUh_zpV4meABD8UnMizuHHrFO0xCAXgf2Qzx4xHEK9-8Xh5aXdgh1hV5Qpe8eIROrteCeYJqrL2tdHYu-3lA0RZ_ZAgA
 
-#EXT-X-STREAM-INF:BANDWIDTH=3500000,RESOLUTION=1280x720
-https://in-mc-pdlive.fancode.com/mumbai/4247425_english_hls_c77d2adc1321506_1ta-di_h264/720p.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=4000000,RESOLUTION=1280x720
+https://in-mc-flive.fancode.com/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/720p.m3u8?hdntl=Expires=1790134901~_GO=Generated~acl=/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/*~Signature=AUh_zpV4meABD8UnMizuHHrFO0xCAXgf2Qzx4xHEK9-8Xh5aXdgh1hV5Qpe8eIROrteCeYJqrL2tdHYu-3lA0RZ_ZAgA
+
+#EXT-X-STREAM-INF:BANDWIDTH=2500000,RESOLUTION=960x540
+https://in-mc-flive.fancode.com/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/540p.m3u8?hdntl=Expires=1790134901~_GO=Generated~acl=/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/*~Signature=AUh_zpV4meABD8UnMizuHHrFO0xCAXgf2Qzx4xHEK9-8Xh5aXdgh1hV5Qpe8eIROrteCeYJqrL2tdHYu-3lA0RZ_ZAgA
 
 #EXT-X-STREAM-INF:BANDWIDTH=1800000,RESOLUTION=854x480
-https://in-mc-pdlive.fancode.com/mumbai/4247425_english_hls_c77d2adc1321506_1ta-di_h264/480p.m3u8
+https://in-mc-flive.fancode.com/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/480p.m3u8?hdntl=Expires=1790134901~_GO=Generated~acl=/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/*~Signature=AUh_zpV4meABD8UnMizuHHrFO0xCAXgf2Qzx4xHEK9-8Xh5aXdgh1hV5Qpe8eIROrteCeYJqrL2tdHYu-3lA0RZ_ZAgA
 
 #EXT-X-STREAM-INF:BANDWIDTH=1000000,RESOLUTION=640x360
-https://in-mc-pdlive.fancode.com/mumbai/4247425_english_hls_c77d2adc1321506_1ta-di_h264/360p.m3u8
+https://in-mc-flive.fancode.com/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/360p.m3u8?hdntl=Expires=1790134901~_GO=Generated~acl=/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/*~Signature=AUh_zpV4meABD8UnMizuHHrFO0xCAXgf2Qzx4xHEK9-8Xh5aXdgh1hV5Qpe8eIROrteCeYJqrL2tdHYu-3lA0RZ_ZAgA
 
-#EXT-X-STREAM-INF:BANDWIDTH=500000,RESOLUTION=426x240
-https://in-mc-pdlive.fancode.com/mumbai/4247425_english_hls_c77d2adc1321506_1ta-di_h264/144p.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=600000,RESOLUTION=426x240
+https://in-mc-flive.fancode.com/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/240p.m3u8?hdntl=Expires=1790134901~_GO=Generated~acl=/mumbai/4249214_english_hls_891bdfaa5646721_1ta-di_h264/*~Signature=AUh_zpV4meABD8UnMizuHHrFO0xCAXgf2Qzx4xHEK9-8Xh5aXdgh1hV5Qpe8eIROrteCeYJqrL2tdHYu-3lA0RZ_ZAgA
