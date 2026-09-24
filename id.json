@@ -56,6 +56,38 @@
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
+        {
+      "id": "nl-1",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://nations-league.freedekholive-577.workers.dev/stream-1.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "nl-2",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://nations-league.freedekholive-577.workers.dev/stream-2.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "nl-3",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://nations-league.freedekholive-577.workers.dev/stream-3.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "nl-4",
+      "name": "6ter",
+      "type": "iframe",
+      "iframeSrc": "https://nations-league.freedekholive-577.workers.dev/stream-4.html",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
     {
       "id": "fussball",
       "name": "6ter",
