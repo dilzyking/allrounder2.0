@@ -1,237 +1,35 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#000000">
-<title>Live Player</title>
-
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
-
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  overflow: hidden;
-  background: #000;
-}
-
-.player-container {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  position: fixed;
-  inset: 0;
-  background: #000;
-}
-
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background: #000;
-}
-
-.plyr {
-  width: 100%;
-  height: 100%;
-  --plyr-color-main: #e50914;
-  --plyr-video-background: #000;
-  --plyr-menu-background: #151515;
-  --plyr-menu-color: #fff;
-  --plyr-control-radius: 5px;
-}
-
-.plyr--video .plyr__controls {
-  padding: 15px 12px;
-  background: linear-gradient(transparent, rgba(0,0,0,.9));
-}
-
-.plyr__video-wrapper {
-  height: 100%;
-  background: #000;
-}
-
-.plyr__video-wrapper video {
-  object-fit: contain;
-}
-
-.status {
-  position: absolute;
-  z-index: 5;
-  top: 15px;
-  left: 15px;
-  color: #fff;
-  background: rgba(20,20,20,.8);
-  border: 1px solid #333;
-  padding: 7px 11px;
-  border-radius: 5px;
-  font: 12px Arial, sans-serif;
-  pointer-events: none;
-}
-
-.status::before {
-  content: "";
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  background: #e50914;
-  border-radius: 50%;
-  margin-right: 7px;
-}
-
-@media (orientation: portrait) {
-  .plyr__video-wrapper video {
-    object-fit: contain;
-  }
-}
-</style>
-</head>
-
-<body>
-<div class="player-container">
-  <div class="status" id="status">Connecting</div>
-  <video id="video" controls playsinline crossorigin="anonymous"
-         preload="auto"></video>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-
-<script>
-const STREAM =
-  "https://daviscup-veto.akamaized.net/f98c8ae68a354ab59a4e28e3dd700d4f/playlist.m3u8";
-
-const video = document.getElementById("video");
-const status = document.getElementById("status");
-
-let hls = null;
-let player = null;
-
-function setStatus(message) {
-  status.textContent = message;
-}
-
-function initializePlayer(qualityOptions = [0]) {
-  if (player) player.destroy();
-
-  player = new Plyr(video, {
-    autoplay: false,
-    muted: false,
-    clickToPlay: true,
-    hideControls: true,
-    resetOnEnd: false,
-    keyboard: { focused: true, global: true },
-    tooltips: { controls: true, seek: true },
-    settings: ["quality", "speed"],
-    speed: {
-      selected: 1,
-      options: [0.5, 0.75, 1, 1.25, 1.5, 2]
-    },
-    quality: {
-      default: 0,
-      options: qualityOptions,
-      forced: true,
-      onChange: changeQuality
-    },
-    i18n: {
-      qualityLabel: { 0: "Auto" }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Player</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
     }
-  });
-
-  player.on("playing", () => setStatus("Playing"));
-  player.on("waiting", () => setStatus("Buffering"));
-  player.on("error", () => setStatus("Playback error"));
-  player.on("canplay", () => setStatus("Ready"));
-}
-
-function changeQuality(height) {
-  if (!hls) return;
-
-  if (height === 0) {
-    hls.currentLevel = -1;
-    return;
-  }
-
-  const index = hls.levels.findIndex(
-    level => level.height === height
-  );
-
-  if (index !== -1) {
-    hls.currentLevel = index;
-  }
-}
-
-function startPlayer() {
-  if (Hls.isSupported()) {
-    hls = new Hls({
-      enableWorker: true,
-      capLevelToPlayerSize: false,
-      startLevel: -1,
-      maxBufferLength: 30
-    });
-
-    hls.loadSource(STREAM);
-    hls.attachMedia(video);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      const heights = [
-        ...new Set(
-          hls.levels
-            .map(level => level.height)
-            .filter(height => height > 0)
-        )
-      ].sort((a, b) => a - b);
-
-      initializePlayer([0, ...heights]);
-      setStatus("Ready");
-    });
-
-    hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
-      if (hls.autoLevelEnabled && hls.levels[data.level]) {
-        setStatus("Auto · " + hls.levels[data.level].height + "p");
-      }
-    });
-
-    hls.on(Hls.Events.ERROR, (_, data) => {
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-          setStatus("Network error");
-          hls.startLoad();
-        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-          setStatus("Recovering playback");
-          hls.recoverMediaError();
-        } else {
-          setStatus("Stream unavailable");
-          hls.destroy();
-        }
-      }
-    });
-
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = STREAM;
-    initializePlayer([0]);
-    setStatus("Ready");
-  } else {
-    setStatus("HLS not supported");
-  }
-}
-
-startPlayer();
-
-window.addEventListener("beforeunload", () => {
-  if (hls) hls.destroy();
-});
-</script>
+    iframe {
+      display: block;          /* removes inline-element gap */
+      width: 100vw;
+      height: 100vh;
+      border: 0;
+      vertical-align: top;     /* belt-and-suspenders for old engines */
+    }
+  </style>
+</head>
+<body>
+  <iframe
+    src="https://trend48.st/live-tv?ch=skysportsplus-uk"
+    sandbox="allow-scripts allow-same-origin"
+    referrerpolicy="no-referrer"
+    allow="encrypted-media; fullscreen; picture-in-picture"
+    allowfullscreen
+  ></iframe>
 </body>
-  <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+ <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
 </html>
