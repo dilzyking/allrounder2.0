@@ -1,139 +1,237 @@
- 
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>FIFA WORLD CUP 2026</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-FMP9REY96D');
-</script>
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<title>Live Player</title>
 
- 
-  
-  <body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg"></video>  
-  </div>  
-  
-  <script>  
-    document.addEventListener('DOMContentLoaded', async () => {  
-      shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
-        console.error('Browser not supported');  
-        return;  
-      }  
-  
-      const video = document.querySelector('video');  
-      const player = new shaka.Player();  
-      await player.attach(video);  
-  
-      const container = document.querySelector('.shaka-video-container');  
-      const ui = new shaka.ui.Overlay(player, container, video);  
-  
-      ui.configure({  
-        controlPanelElements: [  
-          'play_pause', 'time_and_duration', 'mute', 'volume',  
-          'spacer', 'language', 'captions', 'picture_in_picture',  
-          'quality', 'fullscreen'  
-        ],  
-        volumeBarColors: {  
-  base: 'rgba(0, 136, 255, 0.3)',  
-  level: 'rgb(0, 136, 255)'  
-},  
-seekBarColors: {
-  base: 'rgba(90, 0, 0, 0.3)',
-  buffered: 'rgba(120, 0, 0, 0.6)',
-  played: 'rgb(170, 0, 0)'
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-      });  
-  
-   
-      let drmConfig = {  
-        clearKeys: {  
-          "6a028d5592b0e81f9c4fd4de4df6d5c7":
- "9378d2ddd738b2d0b7a85ba65b643a7f"  
-        }  
-      };  
-  
-      let streamUrl = "https://a96aivottlinear-a.akamaihd.net/OTTB/iad-nitro/live/clients/dash/enc/pkooyxhqmr/out/v1/4c8d0ecc7d704eb2935efde33b289d50/cenc.mpd";  
-  
-      player.configure({  
-        drm: drmConfig,  
-        streaming: {  
-          lowLatencyMode: true,  
-          bufferingGoal: 15,  
-          rebufferingGoal: 2,  
-          bufferBehind: 15,  
-          retryParameters: {  
-            timeout: 10000,  
-            maxAttempts: 5,  
-            baseDelay: 300,  
-            backoffFactor: 1.2  
-          },  
-          segmentRequestTimeout: 8000,  
-          segmentPrefetchLimit: 2,  
-          useNativeHlsOnSafari: true  
-        },  
-        manifest: {  
-          retryParameters: {  
-            timeout: 8000,  
-            maxAttempts: 3  
-          }  
-        }  
-      });  
-  
-      player.addEventListener('error', (event) => {  
-        console.error('Shaka Player Error:', event.detail);  
-      });  
-  
-      try {  
-        await player.load(streamUrl);  
-        console.log("Stream loaded successfully");  
-      } catch (error) {  
-        console.error('Load error:', error);  
-      }  
-    });  
-  </script>  
-  </body>  
-<script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+
+.player-container {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  position: fixed;
+  inset: 0;
+  background: #000;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.plyr {
+  width: 100%;
+  height: 100%;
+  --plyr-color-main: #e50914;
+  --plyr-video-background: #000;
+  --plyr-menu-background: #151515;
+  --plyr-menu-color: #fff;
+  --plyr-control-radius: 5px;
+}
+
+.plyr--video .plyr__controls {
+  padding: 15px 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,.9));
+}
+
+.plyr__video-wrapper {
+  height: 100%;
+  background: #000;
+}
+
+.plyr__video-wrapper video {
+  object-fit: contain;
+}
+
+.status {
+  position: absolute;
+  z-index: 5;
+  top: 15px;
+  left: 15px;
+  color: #fff;
+  background: rgba(20,20,20,.8);
+  border: 1px solid #333;
+  padding: 7px 11px;
+  border-radius: 5px;
+  font: 12px Arial, sans-serif;
+  pointer-events: none;
+}
+
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #e50914;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+@media (orientation: portrait) {
+  .plyr__video-wrapper video {
+    object-fit: contain;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="player-container">
+  <div class="status" id="status">Connecting</div>
+  <video id="video" controls playsinline crossorigin="anonymous"
+         preload="auto"></video>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
+<script>
+const STREAM =
+  "https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/cb543d1e786c648b98d43e63d8ef44a4f9591fde1d6988693eb5518975d1073edce2a59caa08ff16388f1ede7f0a66413a3e951fda77118fd87eb141453c5728cfffe729a2c05616b7db083429b56a062a866a68ac39437ed0e21f48a238b6720a5aa82a66443d80b846ac7357db80148b61299bce8c37683f03409a5e5afba358b1ebe55a47dc6ea7b54855c67a16e09f43c8821da6d2dd09985ed023f2119f94f5dad0448283f32393688aa2d675581fb0ae3bf6e053b2d39b1b56f61309756e9e623ef1842a1d954e42269597673d498d74fd882d807224ba42f72727bea719c82b959b2b82a4b3de500b51cea2033475f2b5f1d8b95d47cc5278671279f325b98f09c894f0f81d170b72fcdcd81d858c3e99ba2884a06827f5a1fb4ab692a88ae3bc8c05c96b9a87bcaf344c4a6c1311c67396da3c8b678d23e8f91a2f0a191fed820390cf997f20724383b75bd63812ad94ded08840689c205371c054f477492cc03d6779a50afc993763c066298d2732f65d7ad117a9f67cbbf795b54608b4d8c650f620bae65d9ca554db18563335bafc2850525f3d81be146a1e4d8314b49d9a9b346366cbf8c2f9cc5642771a1f400386e7a73ddbb9c9271919d64064075015049d10d979d56110e04f26a25f1a6fbfeefc638c8e0103c5f8321398c35270/9/1280x720_3000140/index.m3u8";
+
+const video = document.getElementById("video");
+const status = document.getElementById("status");
+
+let hls = null;
+let player = null;
+
+function setStatus(message) {
+  status.textContent = message;
+}
+
+function initializePlayer(qualityOptions = [0]) {
+  if (player) player.destroy();
+
+  player = new Plyr(video, {
+    autoplay: false,
+    muted: false,
+    clickToPlay: true,
+    hideControls: true,
+    resetOnEnd: false,
+    keyboard: { focused: true, global: true },
+    tooltips: { controls: true, seek: true },
+    settings: ["quality", "speed"],
+    speed: {
+      selected: 1,
+      options: [0.5, 0.75, 1, 1.25, 1.5, 2]
+    },
+    quality: {
+      default: 0,
+      options: qualityOptions,
+      forced: true,
+      onChange: changeQuality
+    },
+    i18n: {
+      qualityLabel: { 0: "Auto" }
+    }
+  });
+
+  player.on("playing", () => setStatus("Playing"));
+  player.on("waiting", () => setStatus("Buffering"));
+  player.on("error", () => setStatus("Playback error"));
+  player.on("canplay", () => setStatus("Ready"));
+}
+
+function changeQuality(height) {
+  if (!hls) return;
+
+  if (height === 0) {
+    hls.currentLevel = -1;
+    return;
+  }
+
+  const index = hls.levels.findIndex(
+    level => level.height === height
+  );
+
+  if (index !== -1) {
+    hls.currentLevel = index;
+  }
+}
+
+function startPlayer() {
+  if (Hls.isSupported()) {
+    hls = new Hls({
+      enableWorker: true,
+      capLevelToPlayerSize: false,
+      startLevel: -1,
+      maxBufferLength: 30
+    });
+
+    hls.loadSource(STREAM);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      const heights = [
+        ...new Set(
+          hls.levels
+            .map(level => level.height)
+            .filter(height => height > 0)
+        )
+      ].sort((a, b) => a - b);
+
+      initializePlayer([0, ...heights]);
+      setStatus("Ready");
+    });
+
+    hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+      if (hls.autoLevelEnabled && hls.levels[data.level]) {
+        setStatus("Auto · " + hls.levels[data.level].height + "p");
+      }
+    });
+
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      if (data.fatal) {
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          setStatus("Network error");
+          hls.startLoad();
+        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          setStatus("Recovering playback");
+          hls.recoverMediaError();
+        } else {
+          setStatus("Stream unavailable");
+          hls.destroy();
+        }
+      }
+    });
+
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = STREAM;
+    initializePlayer([0]);
+    setStatus("Ready");
+  } else {
+    setStatus("HLS not supported");
+  }
+}
+
+startPlayer();
+
+window.addEventListener("beforeunload", () => {
+  if (hls) hls.destroy();
+});
+</script>
+</body>
+  <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
 </html>
