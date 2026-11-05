@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,37 +7,112 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="author" content="sayan">
+  <title>Live Player</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;background:#0a0a0a;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
-    #player-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
-    video{width:100%;height:100%;object-fit:contain;background:#000}
-    #status{
-      position:fixed;top:max(16px,env(safe-area-inset-top));right:16px;z-index:9997;
-      display:flex;align-items:center;gap:7px;padding:6px 15px 6px 11px;
-      background:rgba(10,10,10,.88);border:1px solid rgba(255,255,255,.07);
-      font-size:11.5px;font-weight:500;letter-spacing:.2px;border-radius:24px;
-      pointer-events:none;opacity:0;transition:opacity .25s ease,transform .25s ease;
-      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-      white-space:nowrap;box-shadow:0 2px 14px rgba(0,0,0,.45);
-      color:#c0c0c0;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #0a0a0a;
+      overflow: hidden;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-    #status.show{opacity:1;transform:translateY(0)}
-    .st-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;background:#60a5fa}
-    #status.live .st-dot{background:#22d3a0;animation:dot-pulse 2s ease-in-out infinite}
-    #status.warn .st-dot{background:#fb923c;animation:dot-pulse 1s ease-in-out infinite}
-    #status.err .st-dot{background:#f87171}
-    @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.55)}}
-    .sp-fit-btn{background:transparent!important;border:none!important;cursor:pointer!important;padding:0 7px!important;min-width:auto!important;opacity:.75;display:flex;align-items:center;justify-content:center;height:100%;transition:opacity .15s;color:#fff!important}
-    .sp-fit-btn:hover{opacity:1}
-    .fit-pill{font-size:10px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:4px;line-height:1;border:1.5px solid rgba(255,255,255,.28);color:rgba(255,255,255,.8);pointer-events:none;white-space:nowrap;transition:border-color .2s,color .2s}
-    .sp-fit-btn:hover .fit-pill{border-color:rgba(255,255,255,.55);color:#fff}
-    .sp-fit-btn.mode-fill .fit-pill{border-color:#38bdf8;color:#38bdf8}
-    .sp-fit-btn.mode-cover .fit-pill{border-color:#a78bfa;color:#a78bfa}
-    .shaka-controls-container button{color:#fff!important}
-    .shaka-video-container{background-color:#000!important}
-    @media(max-width:380px){.fit-pill{font-size:9px;padding:2px 5px}}
+    #player-container {
+      position: fixed; inset: 0;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    video {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    #status {
+      position: fixed;
+      top: max(16px, env(safe-area-inset-top));
+      right: 16px;
+      z-index: 9997;
+      display: flex; align-items: center; gap: 7px;
+      padding: 6px 15px 6px 11px;
+      background: rgba(10,10,10,.88);
+      border: 1px solid rgba(255,255,255,.07);
+      font-size: 11.5px; font-weight: 500;
+      letter-spacing: .2px;
+      border-radius: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .25s ease, transform .25s ease;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      white-space: nowrap;
+      box-shadow: 0 2px 14px rgba(0,0,0,.45);
+      color: #c0c0c0;
+    }
+    #status.show { opacity: 1; transform: translateY(0); }
+    .st-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      flex-shrink: 0; display: inline-block;
+      background: #60a5fa;
+    }
+    #status.live .st-dot {
+      background: #22d3a0;
+      animation: dot-pulse 2s ease-in-out infinite;
+    }
+    #status.warn .st-dot {
+      background: #fb923c;
+      animation: dot-pulse 1s ease-in-out infinite;
+    }
+    #status.err .st-dot { background: #f87171; }
+    @keyframes dot-pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .35; transform: scale(.55); }
+    }
+    .sp-fit-btn {
+      background: transparent !important;
+      border: none !important;
+      cursor: pointer !important;
+      padding: 0 7px !important;
+      min-width: auto !important;
+      opacity: .75;
+      display: flex; align-items: center; justify-content: center;
+      height: 100%;
+      transition: opacity .15s;
+      color: #fff !important;
+    }
+    .sp-fit-btn:hover { opacity: 1; }
+    .fit-pill {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      line-height: 1;
+      border: 1.5px solid rgba(255,255,255,.28);
+      color: rgba(255,255,255,.8);
+      pointer-events: none;
+      white-space: nowrap;
+      transition: border-color .2s, color .2s;
+    }
+    .sp-fit-btn:hover .fit-pill {
+      border-color: rgba(255,255,255,.55);
+      color: #fff;
+    }
+    .sp-fit-btn.mode-fill .fit-pill {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+    .sp-fit-btn.mode-cover .fit-pill {
+      border-color: #a78bfa;
+      color: #a78bfa;
+    }
+    .shaka-controls-container button { color: #fff !important; }
+    .shaka-video-container { background-color: #000 !important; }
+    video.mode-fill { object-fit: fill; }
+    video.mode-cover { object-fit: cover; }
+    @media (max-width: 380px) {
+      .fit-pill { font-size: 9px; padding: 2px 5px; }
+    }
   </style>
 </head>
 <body>
@@ -55,22 +129,28 @@
 
     var SF_AUTHOR = "sayan";
 
-    // --- Configuration ---
-    // Cookie is now fetched dynamically from this API
     var COOKIE_API_URL = "https://allrounder2-0.pages.dev/api/hindi.json";
+    var PROXY_PREFIX   = "https://api.allorigins.win/raw?url=";
+    var MOBILE_UA      = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
 
     var CONFIG = {
       streamUrl: "https://jiotvpllive.cdn.jio.com/bpk-tv/SonySportsTen3HinHDSTB_BTS/WDVLive/index.mpd",
-      // cookie field is intentionally removed – fetched at runtime
       keys: [
         "c20ba4e9d0635bab9f17b177f0d91039:fcb4a266539ac7b03ef02c5600c5598d",
-    "c592c427c0d35e9a8ad88cdcb76a16c1:8ecb737e4015c22451d6c14fe37e9e15",
-    "10f4930166fa5b6ab5d71a4a978bdfac:9dfa22aa4d6a3d820101f59013de0236",
-    "140edf90fa0b5c99864f2442df4df535:991b51ed2e690c96163a31ae4a6f6452",
-    "e392571e46bd5461854986ae9e58083d:1167c024aa8bbad2c1beaf218cfeec11"
- 
+        "c592c427c0d35e9a8ad88cdcb76a16c1:8ecb737e4015c22451d6c14fe37e9e15",
+        "10f4930166fa5b6ab5d71a4a978bdfac:9dfa22aa4d6a3d820101f59013de0236",
+        "140edf90fa0b5c99864f2442df4df535:991b51ed2e690c96163a31ae4a6f6452",
+        "e392571e46bd5461854986ae9e58083d:1167c024aa8bbad2c1beaf218cfeec11"
       ]
     };
+
+    var IS_DESKTOP = !/Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent);
+
+    function proxify(url) {
+      if (!IS_DESKTOP) return url;
+      if (url.indexOf(PROXY_PREFIX) === 0) return url;
+      return PROXY_PREFIX + encodeURIComponent(url);
+    }
 
     var video      = document.getElementById("video");
     var container  = document.getElementById("player-container");
@@ -110,25 +190,30 @@
       return out;
     }
 
-    // ----- Fetch cookie from external API -----
     async function fetchCookieFromApi() {
-      try {
-        setStatus("Fetching cookie…", "warn", 0);
-        const resp = await fetch(COOKIE_API_URL, {
-          cache: "no-store",
-          headers: { "Accept": "application/json" }
-        });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const data = await resp.json();
-        const cookie = (data.cookie || "").trim();
-        if (!cookie) throw new Error("No cookie field in response");
-        console.log("[cookie] fetched:", cookie.slice(0, 40) + "…");
-        return cookie;
-      } catch (err) {
-        console.error("[cookie] fetch failed:", err);
-        setStatus("Cookie fetch failed", "err", 0);
-        throw err; // re-throw so init stops
+      var urls = IS_DESKTOP
+        ? [proxify(COOKIE_API_URL), COOKIE_API_URL]
+        : [COOKIE_API_URL];
+
+      var lastErr = null;
+      for (var i = 0; i < urls.length; i++) {
+        try {
+          setStatus("Fetching cookie…", "warn", 0);
+          var resp = await fetch(urls[i], {
+            cache: "no-store",
+            headers: { "Accept": "application/json" }
+          });
+          if (!resp.ok) throw new Error("HTTP " + resp.status);
+          var data = await resp.json();
+          var cookie = (data.cookie || "").trim();
+          if (!cookie) throw new Error("No cookie field");
+          return cookie;
+        } catch (e) {
+          lastErr = e;
+        }
       }
+      setStatus("Cookie fetch failed", "err", 0);
+      throw lastErr || new Error("cookie fetch failed");
     }
 
     function injectFitButton(containerEl, videoEl) {
@@ -180,8 +265,7 @@
         function gcd(a, b) { return b ? gcd(b, a % b) : a; }
         var g = gcd(w, h) || 1, rw = w/g, rh = h/g;
         var named = { "16:9": 16/9, "4:3": 4/3, "21:9": 21/9, "1:1": 1, "9:16": 9/16, "3:2": 3/2, "5:4": 5/4, "2:1": 2 };
-        var real = w/h;
-        var best = null, bestD = 0.02;
+        var real = w/h, best = null, bestD = 0.02;
         Object.keys(named).forEach(function(k) {
           var d = Math.abs(named[k] - real);
           if (d < bestD) { bestD = d; best = k; }
@@ -212,7 +296,6 @@
         updateRatio();
       });
       updateRatio();
-
       return true;
     }
 
@@ -223,16 +306,11 @@
         return;
       }
 
-      // ---- 1. Fetch cookie from API before anything else ----
-      let cookieValue;
+      var cookieValue;
       try {
         cookieValue = await fetchCookieFromApi();
-      } catch (e) {
-        // error status already shown by fetchCookieFromApi
-        return;
-      }
+      } catch (e) { return; }
 
-      // Now we have a cookie – proceed
       var player = new shaka.Player();
       await player.attach(video);
 
@@ -240,31 +318,20 @@
       ui.configure({
         addBigPlayButton: true,
         controlPanelElements: [
-          "play_pause",
-          "mute",
-          "time_and_duration",
-          "spacer",
-          "quality",
-          "picture_in_picture",
-          "fullscreen"
+          "play_pause","mute","time_and_duration","spacer",
+          "quality","picture_in_picture","fullscreen"
         ],
-        seekBarColors: {
-          base: "#828282",
-          buffered: "#ffc336",
-          played: "#1fc7ff"
-        }
+        seekBarColors: { base: "#828282", buffered: "#ffc336", played: "#1fc7ff" }
       });
 
       var injectCount = 0;
       (function tryInject() {
         if (injectFitButton(container, video)) return;
-        if (++injectCount < 5) setTimeout(tryInject, 150);
+        if (++injectCount < 8) setTimeout(tryInject, 200);
       })();
 
       var clearKeys = buildClearKeys(CONFIG.keys);
-      var keyCount = Object.keys(clearKeys).length;
-
-      if (keyCount === 0) {
+      if (Object.keys(clearKeys).length === 0) {
         setStatus("No DRM keys configured", "err", 0);
         return;
       }
@@ -280,35 +347,40 @@
         }
       });
 
-      // cookieValue is already set from fetchCookieFromApi()
-
       player.getNetworkingEngine().registerRequestFilter(function(type, request) {
+        request.headers["User-Agent"] = MOBILE_UA;
         request.headers["Referer"]    = "https://www.jiotv.com/";
-        request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-        request.headers["Cookie"]     = cookieValue;
 
-        var urlCookie = cookieValue.indexOf("__hdnea__=") === 0 ? cookieValue.slice(10) : cookieValue;
+        if (!IS_DESKTOP) {
+          request.headers["Cookie"] = cookieValue;
+        }
+
+        var urlCookie = cookieValue.indexOf("__hdnea__=") === 0
+          ? cookieValue.slice(10) : cookieValue;
         if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
              type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
             request.uris[0].indexOf("__hdnea__") === -1) {
           var sep = request.uris[0].indexOf("?") === -1 ? "?" : "&";
           request.uris[0] += sep + "__hdnea__=" + urlCookie;
         }
+
+        if (IS_DESKTOP) {
+          request.uris[0] = proxify(request.uris[0]);
+        }
       });
 
       try {
         setStatus("Loading…", "warn", 0);
-        await player.load(CONFIG.streamUrl);
+        var loadUrl = CONFIG.streamUrl;
+        if (IS_DESKTOP) loadUrl = proxify(loadUrl);
+        await player.load(loadUrl);
         setStatus("Live", "live", 4000);
         video.play().catch(function() {});
       } catch (e) {
         setStatus("Error loading stream", "err", 0);
       }
 
-      video.addEventListener("play", function() {
-        video.muted = false;
-      });
-
+      video.addEventListener("play", function() { video.muted = false; });
       function unmuteOnce() { video.muted = false; }
       container.addEventListener("pointerdown", unmuteOnce, { capture: true, once: true });
       container.addEventListener("click",       unmuteOnce, { capture: true, once: true });
@@ -325,7 +397,11 @@
     try { window.__sf_author__ = SF_AUTHOR; } catch (e) {}
   })();
   </script>
-<script>(function(s){s.dataset.zone='12181978',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
+  <script>
+    (function(s){
+      s.dataset.zone='12181978';
+      s.src='https://llvpn.com/tag.min.js';
+    })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+  </script>
 </body>
 </html>
