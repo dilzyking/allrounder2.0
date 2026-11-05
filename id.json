@@ -17,7 +17,7 @@
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
     {
-      "id": "mirzapur",
+      "id": "ramayana",
       "name": "Star Sports Hindi",
       "type": "iframe",
       "iframeSrc": "https://allrounder3-0.pages.dev/mirzapur",
