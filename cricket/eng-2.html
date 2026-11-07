@@ -12,24 +12,13 @@
     html,body{width:100%;height:100%;background:#0a0a0a;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
     #player-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
     video{width:100%;height:100%;object-fit:contain;background:#000}
-    /* subtle status badge (inspired by second design) */
-    #status{
-      position:fixed;top:max(16px,env(safe-area-inset-top));right:16px;z-index:9997;
-      display:flex;align-items:center;gap:7px;padding:6px 15px 6px 11px;
-      background:rgba(10,10,10,.88);border:1px solid rgba(255,255,255,.07);
-      font-size:11.5px;font-weight:500;letter-spacing:.2px;border-radius:24px;
-      pointer-events:none;opacity:0;transition:opacity .25s ease,transform .25s ease;
-      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-      white-space:nowrap;box-shadow:0 2px 14px rgba(0,0,0,.45);
-      color:#c0c0c0;
-    }
+    #status{position:fixed;top:max(16px,env(safe-area-inset-top));right:16px;z-index:9997;display:flex;align-items:center;gap:7px;padding:6px 15px 6px 11px;background:rgba(10,10,10,.88);border:1px solid rgba(255,255,255,.07);font-size:11.5px;font-weight:500;letter-spacing:.2px;border-radius:24px;pointer-events:none;opacity:0;transition:opacity .25s ease,transform .25s ease;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);white-space:nowrap;box-shadow:0 2px 14px rgba(0,0,0,.45);color:#c0c0c0}
     #status.show{opacity:1;transform:translateY(0)}
     .st-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;background:#60a5fa}
     #status.live .st-dot{background:#22d3a0;animation:dot-pulse 2s ease-in-out infinite}
     #status.warn .st-dot{background:#fb923c;animation:dot-pulse 1s ease-in-out infinite}
     #status.err .st-dot{background:#f87171}
     @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.55)}}
-    /* custom fit button (like second example) */
     .sp-fit-btn{background:transparent!important;border:none!important;cursor:pointer!important;padding:0 7px!important;min-width:auto!important;opacity:.75;display:flex;align-items:center;justify-content:center;height:100%;transition:opacity .15s;color:#fff!important}
     .sp-fit-btn:hover{opacity:1}
     .fit-pill{font-size:10px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:4px;line-height:1;border:1.5px solid rgba(255,255,255,.28);color:rgba(255,255,255,.8);pointer-events:none;white-space:nowrap;transition:border-color .2s,color .2s}
@@ -47,44 +36,45 @@
   <video id="video" autoplay muted playsinline preload="metadata"></video>
 </div>
 
-<!-- status badge (optional but neat) -->
 <div id="status"><span class="st-dot"></span><span id="statusText">Live</span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+
 <script>
-(function() {
+(function () {
   "use strict";
 
-  // ----- CONFIG (exactly as first code) -----
   const CONFIG = {
-    streamUrl: "https://jiotvmblive.cdn.jio.com/bpk-tv/Ten_1_MOB/WDVLive/index.mpd",
-    keyId: "3394be91407c5fe99d784d2f2d6d4a12",
-    key: "58665e1df41f9f22ed73c56384bb3f51",
-    cookieUrl: "https://allrounder2-0.pages.dev/api/Sony-3.json"
+    streamUrl: "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_BTS/WDVLive/index.mpd",
+    drmKeys: [
+      "f217e9fe133e5b948c323abef1e39b47:63640dc4430d14003def0c97a2dbab4d",
+      "06dd6287c4b956419d15d6c8e513aeed:a82d6b850b5c281c0054fc6d55e1c6ba",
+      "45825561f4ef516691a9e16d1d35dd1d:3951fe7fbf4b0b33e6246fc401f76797",
+      "bf95222d9be85d85a91281e796e99481:bc932276031b3e63758cf67b147c3557",
+      "eda3132244745c10920b01536bc8a75b:2b5f8bdba279032943a040078bb22b35"
+    ],
+    cookieUrl: "https://allrounder2-0.pages.dev/api/hundi.json"
   };
 
-  // ----- DOM refs -----
   const video = document.getElementById("video");
   const container = document.getElementById("player-container");
   const statusEl = document.getElementById("status");
   const statusText = document.getElementById("statusText");
 
   let statusTimer = null;
-
   function setStatus(msg, type, dur) {
     if (!statusEl) return;
     statusText.textContent = msg || "Live";
     statusEl.className = "show " + (type || "live");
     if (statusTimer) { clearTimeout(statusTimer); statusTimer = null; }
     if (dur !== 0) {
-      statusTimer = setTimeout(function() {
+      statusTimer = setTimeout(function () {
         statusEl.className = statusEl.className.replace("show", "").trim();
         statusTimer = null;
       }, dur || 4000);
     }
   }
 
-  // ----- fit button injection (from second code) -----
   function injectFitButton(containerEl, videoEl) {
     const panel = containerEl.querySelector(".shaka-controls-button-panel");
     if (!panel) return false;
@@ -118,13 +108,13 @@
       if (pill) pill.textContent = (m === "contain") ? currentRatio : FIT_LABELS[m];
     }
 
-    fitBtn.addEventListener("click", function(e) {
+    fitBtn.addEventListener("click", function (e) {
       e.stopPropagation();
       applyFit((fitIdx + 1) % FITS.length);
     });
 
-    ["fullscreenchange", "webkitfullscreenchange"].forEach(function(ev) {
-      document.addEventListener(ev, function() {
+    ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+      document.addEventListener(ev, function () {
         if (!(document.fullscreenElement || document.webkitFullscreenElement)) applyFit(0);
       });
     });
@@ -132,11 +122,11 @@
     function ratioLabel(w, h) {
       if (!w || !h) return "—";
       function gcd(a, b) { return b ? gcd(b, a % b) : a; }
-      const g = gcd(w, h) || 1, rw = w/g, rh = h/g;
-      const named = { "16:9": 16/9, "4:3": 4/3, "21:9": 21/9, "1:1": 1, "9:16": 9/16, "3:2": 3/2, "5:4": 5/4, "2:1": 2 };
-      const real = w/h;
+      const g = gcd(w, h) || 1, rw = w / g, rh = h / g;
+      const named = { "16:9": 16 / 9, "4:3": 4 / 3, "21:9": 21 / 9, "1:1": 1, "9:16": 9 / 16, "3:2": 3 / 2, "5:4": 5 / 4, "2:1": 2 };
+      const real = w / h;
       let best = null, bestD = 0.02;
-      Object.keys(named).forEach(function(k) {
+      Object.keys(named).forEach(function (k) {
         const d = Math.abs(named[k] - real);
         if (d < bestD) { bestD = d; best = k; }
       });
@@ -159,7 +149,7 @@
       }
     }
 
-    videoEl.addEventListener("loadedmetadata", function() { ratioTries = 0; updateRatio(); });
+    videoEl.addEventListener("loadedmetadata", function () { ratioTries = 0; updateRatio(); });
     videoEl.addEventListener("resize", updateRatio);
     videoEl.addEventListener("timeupdate", function onFirstFrame() {
       videoEl.removeEventListener("timeupdate", onFirstFrame);
@@ -170,9 +160,21 @@
     return true;
   }
 
-  // ----- main player init (first code logic) -----
+  function buildClearKeys(keyArray) {
+    const clearKeys = {};
+    if (!Array.isArray(keyArray)) return clearKeys;
+    keyArray.forEach(function (pair) {
+      if (!pair || typeof pair !== "string") return;
+      const idx = pair.indexOf(":");
+      if (idx === -1) return;
+      const kid = pair.slice(0, idx).trim();
+      const key = pair.slice(idx + 1).trim();
+      if (kid && key) clearKeys[kid] = key;
+    });
+    return clearKeys;
+  }
+
   async function initPlayer() {
-    // Polyfill & browser check
     shaka.polyfill.installAll();
     if (!shaka.Player.isBrowserSupported()) {
       setStatus("Browser Not Supported", "err", 0);
@@ -182,7 +184,6 @@
     const player = new shaka.Player();
     await player.attach(video);
 
-    // UI overlay
     const ui = new shaka.ui.Overlay(player, container, video);
     ui.configure({
       addBigPlayButton: true,
@@ -202,16 +203,16 @@
       }
     });
 
-    // Inject fit button (from second code)
     let injectCount = 0;
     (function tryInject() {
       if (injectFitButton(container, video)) return;
       if (++injectCount < 5) setTimeout(tryInject, 150);
     })();
 
-    // Player config (first code)
+    const clearKeys = buildClearKeys(CONFIG.drmKeys);
+
     player.configure({
-      drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } },
+      drm: { clearKeys: clearKeys },
       manifest: { defaultPresentationDelay: 5 },
       streaming: {
         lowLatencyMode: true,
@@ -221,18 +222,15 @@
       }
     });
 
-    // Fetch cookie (first code)
     let cookieValue = "";
     try {
       const response = await fetch(CONFIG.cookieUrl, { cache: "no-store" });
       const data = await response.json();
       cookieValue = data.cookie || "";
-    } catch(e) {
-      console.warn("Cookie fetch failed, continuing without cookie");
-    }
+    } catch (e) {}
 
     if (cookieValue) {
-      player.getNetworkingEngine().registerRequestFilter((type, request) => {
+      player.getNetworkingEngine().registerRequestFilter(function (type, request) {
         request.headers["Referer"] = "https://www.jiotv.com/";
         request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
         request.headers["Cookie"] = cookieValue;
@@ -247,35 +245,29 @@
       });
     }
 
-    // Load stream (first code)
     try {
       setStatus("Loading…", "warn", 0);
       await player.load(CONFIG.streamUrl);
       setStatus("Live", "live", 4000);
-      video.play().catch(function() {});
-    } catch(e) {
-      console.error("Player load error:", e);
+      video.play().catch(function () {});
+    } catch (e) {
       setStatus("Error loading stream", "err", 0);
     }
 
-    // Auto unmute on play (first code)
-    video.addEventListener("play", function() {
+    video.addEventListener("play", function () {
       video.muted = false;
     });
 
-    // Also unmute on any user interaction (like second)
     function unmuteOnce() { video.muted = false; }
     container.addEventListener("pointerdown", unmuteOnce, { capture: true, once: true });
     container.addEventListener("click", unmuteOnce, { capture: true, once: true });
 
-    // Basic error / recovery (keep status updated)
-    player.addEventListener("error", function(ev) {
+    player.addEventListener("error", function (ev) {
       const err = ev.detail;
       setStatus("Stream error: " + (err.code || ""), "err", 5000);
     });
   }
 
-  // kick off
   document.addEventListener("DOMContentLoaded", initPlayer);
 })();
 </script>
