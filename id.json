@@ -501,7 +501,7 @@
       "id": "tnt-1",
       "name": "TNT Sports 1",
       "type": "iframe",
-      "iframeSrc": "https://cricketstan.github.io/TNT-1/",
+      "iframeSrc": "https://allrounder3-0.pages.dev/cricket/tnt-1",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=tnt-1",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=tnt-1"
     },
