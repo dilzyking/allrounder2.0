@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080a0d">
+<title>MatchDekho | Live Sports</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  color-scheme:dark;
+  --bg:#080a0d;
+  --surface:#11151b;
+  --border:rgba(255,255,255,.08);
+  --muted:#8b95a5;
+  --green:#36e39f;
+}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 85% 0%,rgba(26,111,80,.13),transparent 45%),
+    var(--bg);
+  color:#fff;
+  font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+button,input{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(8,10,13,.9);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.header-inner{
+  max-width:1320px;
+  margin:auto;
+  padding:20px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.brand{
+  color:#fff;
+  text-decoration:none;
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+.brand span{color:var(--green)}
+.header-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#bec8d1;
+  font-size:12px;
+}
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(54,227,159,.35);
+}
+main{
+  max-width:1320px;
+  margin:auto;
+  padding:42px 24px 50px;
+}
+.eyebrow{
+  color:var(--green);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+h1{
+  font-size:clamp(30px,5vw,48px);
+  letter-spacing:-1.7px;
+  line-height:1.1;
+}
+.intro{
+  color:var(--muted);
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.6;
+}
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin:32px 0 22px;
+  flex-wrap:wrap;
+}
+.filters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.filter{
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:#aab4c1;
+  padding:10px 17px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:600;
+}
+.filter.active{
+  color:#07150e;
+  background:var(--green);
+  border-color:var(--green);
+}
+.search{
+  width:min(100%,310px);
+  padding:12px 16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:#fff;
+  outline:none;
+  font-size:13px;
+}
+.search:focus{border-color:var(--green)}
+.search::placeholder{color:#738092}
+.section-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+}
+.section-top h2{
+  font-size:17px;
+  font-weight:650;
+  letter-spacing:-.3px;
+}
+#count{
+  color:var(--muted);
+  font-size:12px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:16px;
+}
+.card{
+  display:block;
+  text-decoration:none;
+  color:#fff;
+  border:1px solid var(--border);
+  border-radius:17px;
+  overflow:hidden;
+  background:var(--surface);
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(54,227,159,.4);
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+.card:focus-visible{
+  outline:2px solid var(--green);
+  outline-offset:4px;
+}
+.art{
+  position:relative;
+  aspect-ratio:16/10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 85% 15%,rgba(130,97,244,.3),transparent 65%),
+    linear-gradient(135deg,#171727,#252043);
+}
+.art.star{
+  background:
+    radial-gradient(circle at 85% 15%,rgba(38,143,239,.3),transparent 65%),
+    linear-gradient(135deg,#101c30,#123449);
+}
+.art.other{
+  background:
+    radial-gradient(circle at 85% 15%,rgba(54,227,159,.2),transparent 65%),
+    linear-gradient(135deg,#102520,#142f29);
+}
+.art:after{
+  content:"";
+  position:absolute;
+  width:150px;
+  height:150px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:50%;
+  right:-70px;
+  bottom:-90px;
+}
+.network{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:3px;
+  color:rgba(255,255,255,.75);
+}
+.channel-number{
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:-1px;
+  line-height:1.1;
+}
+.language{
+  font-size:10px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.6);
+}
+.quality{
+  position:absolute;
+  top:10px;
+  right:10px;
+  padding:3px 5px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:4px;
+  font-size:9px;
+  font-weight:700;
+  color:#dde4ef;
+}
+.card-body{padding:14px}
+.card-title{
+  font-size:12px;
+  font-weight:600;
+  line-height:1.5;
+  min-height:36px;
+}
+.watch{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:var(--green);
+  font-size:11px;
+  margin-top:9px;
+}
+.play{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(54,227,159,.1);
+  font-size:9px;
+}
+.message{
+  text-align:center;
+  padding:55px 20px;
+  color:var(--muted);
+  line-height:1.7;
+  border:1px dashed var(--border);
+  border-radius:16px;
+}
+.message button{
+  margin-top:14px;
+  background:var(--green);
+  color:#07150e;
+  border:0;
+  padding:10px 20px;
+  border-radius:9px;
+  font-weight:700;
+}
+[hidden]{display:none!important}
+.skeleton{
+  aspect-ratio:1/1.05;
+  border-radius:17px;
+  border:1px solid var(--border);
+  background:linear-gradient(100deg,#11151b 25%,#1a212a 45%,#11151b 65%);
+  background-size:250% 100%;
+  animation:loading 1.4s ease-in-out infinite;
+}
+@keyframes loading{
+  from{background-position:100% 0}
+  to{background-position:-100% 0}
+}
+footer{
+  margin-top:30px;
+  color:#647080;
+  font-size:11px;
+  line-height:1.7;
+}
+@media(min-width:1250px){
+  .grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media(max-width:1000px){
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .search{width:100%;max-width:none}
+  .toolbar{gap:16px}
+}
+@media(max-width:520px){
+  .header-inner{padding:18px 16px}
+  .brand{font-size:21px}
+  main{padding:30px 16px 35px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card-body{padding:12px}
+  .filter{padding:9px 14px}
+  .header-label{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <a class="brand" href="./">Match<span>Dekho</span></a>
+    <div class="header-label"><span class="dot"></span> SPORTS TV</div>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">Your sports destination</div>
+  <h1>Every channel.<br>One place.</h1>
+  <p class="intro">Choose your sports channel and start watching.</p>
+
+  <div class="toolbar">
+    <div class="filters" aria-label="Filter channels">
+      <button class="filter active" data-filter="all" aria-pressed="true">All channels</button>
+      <button class="filter" data-filter="sony" aria-pressed="false">Sony Sports</button>
+      <button class="filter" data-filter="star" aria-pressed="false">Star Sports</button>
+    </div>
+
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="Search channels…"
+      aria-label="Search channels"
+      autocomplete="off"
+    >
+  </div>
+
+  <div class="section-top">
+    <h2>Sports channels</h2>
+    <span id="count" aria-live="polite">Loading…</span>
+  </div>
+
+  <div id="grid" class="grid" aria-busy="true"></div>
+
+  <div id="message" class="message" role="status" hidden>
+    <p id="messageText"></p>
+    <button id="retry" type="button" hidden>Try again</button>
+  </div>
+
+  <footer id="updated"></footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  const API_URL = "https://allrounder3-0.pages.dev/api/sports.json";
+
+  // These same aliases are used on the player page.
+  const CHANNEL_SLUGS = {
+    STEN1: "ten-1",
+    STEN2: "ten-2",
+    STEN3: "ten-3",
+    STENT: "ten-4-tamil",
+    STENTU: "ten-4-telugu",
+    STENK: "ten-4-kannada",
+    STEN5: "ten-5"
+  };
+
+  const grid = document.getElementById("grid");
+  const count = document.getElementById("count");
+  const search = document.getElementById("search");
+  const message = document.getElementById("message");
+  const messageText = document.getElementById("messageText");
+  const retry = document.getElementById("retry");
+  const updated = document.getElementById("updated");
+
+  let channels = [];
+  let currentFilter = "all";
+  let loaded = false;
+
+  function networkOf(channel) {
+    const name = String(channel.name || "").toLowerCase();
+    if (name.includes("sony")) return "sony";
+    if (name.includes("star")) return "star";
+    return "other";
+  }
+
+  function slugOf(channel) {
+    const id = String(channel.id || "");
+    return CHANNEL_SLUGS[id.toUpperCase()] || id.toLowerCase();
+  }
+
+  function showMessage(text, canRetry) {
+    messageText.textContent = text;
+    retry.hidden = !canRetry;
+    message.hidden = false;
+  }
+
+  function createCard(channel) {
+    const name = String(channel.name || channel.id).trim();
+    const network = networkOf(channel);
+    const number = (name.match(/\b[1-5]\b/) || [""])[0];
+    const language = (name.match(/\b(Hindi|Tamil|Telugu|Kannada)\b/i) || ["Sports"])[0];
+    const isSelect = /\bselect\b/i.test(name);
+    const isKhel = /\bkhel\b/i.test(name);
+
+    const card = document.createElement("a");
+    card.className = "card";
+    card.href = "player?id=" + encodeURIComponent(slugOf(channel));
+    card.setAttribute("aria-label", "Watch " + name);
+
+    const art = document.createElement("div");
+    art.className = "art " + network;
+
+    const networkLabel = document.createElement("span");
+    networkLabel.className = "network";
+    networkLabel.textContent =
+      network === "sony" ? "SONY SPORTS" :
+      network === "star" ? "STAR SPORTS" : "SPORTS TV";
+
+    const channelNumber = document.createElement("span");
+    channelNumber.className = "channel-number";
+    channelNumber.textContent = isKhel
+      ? "KHEL"
+      : isSelect
+        ? "SELECT " + number
+        : network === "sony"
+          ? "TEN " + number
+          : number || "LIVE";
+
+    const languageLabel = document.createElement("span");
+    languageLabel.className = "language";
+    languageLabel.textContent = language;
+
+    const quality = document.createElement("span");
+    quality.className = "quality";
+    quality.textContent = /\bHD\b/i.test(name) ? "HD" : "SD";
+
+    art.append(networkLabel, channelNumber, languageLabel, quality);
+
+    const body = document.createElement("div");
+    body.className = "card-body";
+
+    const title = document.createElement("div");
+    title.className = "card-title";
+    title.textContent = name;
+
+    const watch = document.createElement("div");
+    watch.className = "watch";
+
+    const watchText = document.createElement("span");
+    watchText.textContent = "Watch channel";
+
+    const play = document.createElement("span");
+    play.className = "play";
+    play.textContent = "▶";
+    play.setAttribute("aria-hidden", "true");
+
+    watch.append(watchText, play);
+    body.append(title, watch);
+    card.append(art, body);
+
+    return card;
+  }
+
+  function render() {
+    if (!loaded) return;
+
+    const query = search.value.trim().toLowerCase();
+
+    const filtered = channels.filter(function (channel) {
+      const matchesNetwork =
+        currentFilter === "all" || networkOf(channel) === currentFilter;
+
+      const searchable = [
+        channel.name,
+        channel.id,
+        slugOf(channel)
+      ].join(" ").toLowerCase();
+
+      return matchesNetwork && searchable.includes(query);
+    });
+
+    grid.replaceChildren();
+    message.hidden = true;
+
+    const fragment = document.createDocumentFragment();
+
+    filtered.forEach(function (channel) {
+      fragment.appendChild(createCard(channel));
+    });
+
+    grid.appendChild(fragment);
+    count.textContent = filtered.length + " channels";
+
+    if (!filtered.length) {
+      showMessage(
+        channels.length ? "No channels match your search." : "No channels available.",
+        false
+      );
+    }
+  }
+
+  async function loadChannels() {
+    loaded = false;
+    message.hidden = true;
+    updated.textContent = "";
+    grid.setAttribute("aria-busy", "true");
+    grid.replaceChildren();
+    count.textContent = "Loading…";
+
+    for (let i = 0; i < 12; i++) {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton";
+      skeleton.setAttribute("aria-hidden", "true");
+      grid.appendChild(skeleton);
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(function () {
+      controller.abort();
+    }, 20000);
+
+    try {
+      const response = await fetch(API_URL, {
+        cache: "no-store",
+        signal: controller.signal
+      });
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      const data = await response.json();
+
+      if (!data || !Array.isArray(data.channels)) {
+        throw new Error("Invalid channel data");
+      }
+
+      const seen = new Set();
+
+      channels = data.channels.filter(function (channel) {
+        if (!channel || !channel.id || !channel.stream_url) return false;
+
+        const id = String(channel.id).toLowerCase();
+        if (seen.has(id)) return false;
+
+        seen.add(id);
+        return true;
+      });
+
+      loaded = true;
+      render();
+
+      if (data.last_updated) {
+        updated.textContent = "Last updated: " + data.last_updated;
+      }
+    } catch (error) {
+      grid.replaceChildren();
+      count.textContent = "Unavailable";
+      showMessage("Unable to load channels. Please try again.", true);
+    } finally {
+      clearTimeout(timeout);
+      grid.setAttribute("aria-busy", "false");
+    }
+  }
+
+  document.querySelectorAll(".filter").forEach(function (button) {
+    button.addEventListener("click", function () {
+      currentFilter = button.dataset.filter;
+
+      document.querySelectorAll(".filter").forEach(function (item) {
+        const active = item === button;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+
+      render();
+    });
+  });
+
+  search.addEventListener("input", render);
+  retry.addEventListener("click", loadChannels);
+
+  loadChannels();
+})();
+</script>
+</body>
+</html>
