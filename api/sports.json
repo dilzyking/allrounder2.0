@@ -22,7 +22,7 @@
       "id": "STEN2",
       "name": "Sony Sports 2 HD",
       "stream_url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonySportsTen2HDSTB_BTS/WDVLive/index.mpd",
-      "cookie": "__hdnea=st=1794668431~exp=1794690031~acl=/bpk-tv/SonySportsTen2HDSTB_BTS/WDVLive/*~hmac=a3bbb4103e1c839b5667d4e390e9bcffd5d9a3a5f084506c5be6bf888b2714f8",
+      "cookie": "__hdnea__=st=1794668431~exp=1794690031~acl=/bpk-tv/SonySportsTen2HDSTB_BTS/WDVLive/*~hmac=a3bbb4103e1c839b5667d4e390e9bcffd5d9a3a5f084506c5be6bf888b2714f8",
       "cookie_expire": 1794647532,
       "cookie_expire_ist": "14 Nov 2026, 02:42:12 PM IST",
       "key_id": null,
