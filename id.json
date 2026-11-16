@@ -49,10 +49,10 @@
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
     {
-      "id": "pl2",
+      "id": "t-10",
       "name": "6ter",
       "type": "iframe",
-      "iframeSrc": "https://fifa-world-cup-live.pages.dev/6ter",
+      "iframeSrc": "https://allrounder3-0.pages.dev/sports/player?id=e1hd",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
