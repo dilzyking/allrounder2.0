@@ -45,15 +45,19 @@
   "use strict";
 
   const CONFIG = {
-    streamUrl: "https://jiotvpllive.cdn.jio.com/bpk-tv/SonySportsTen3HinHDSTB_BTS/WDVLive/index.mpd",
-    drmKeys: [
-      "c20ba4e9d0635bab9f17b177f0d91039:fcb4a266539ac7b03ef02c5600c5598d",
-      "c592c427c0d35e9a8ad88cdcb76a16c1:8ecb737e4015c22451d6c14fe37e9e15",
-      "10f4930166fa5b6ab5d71a4a978bdfac:9dfa22aa4d6a3d820101f59013de0236",
-      "140edf90fa0b5c99864f2442df4df535:991b51ed2e690c96163a31ae4a6f6452",
-      "e392571e46bd5461854986ae9e58083d:1167c024aa8bbad2c1beaf218cfeec11"
-    ],
-    cookieUrl: "https://allrounder2-0.pages.dev/api/hindi.json"
+    apiUrl: "https://allrounder3-0.pages.dev/api/sports.json",
+    channelId: "STEN3",
+    fallback: {
+      streamUrl: "https://jiotvpllive.cdn.jio.com/bpk-tv/SonySportsTen3HinHDSTB_BTS/WDVLive/index.mpd",
+      drmKeys: [
+        "c20ba4e9d0635bab9f17b177f0d91039:fcb4a266539ac7b03ef02c5600c5598d",
+        "c592c427c0d35e9a8ad88cdcb76a16c1:8ecb737e4015c22451d6c14fe37e9e15",
+        "10f4930166fa5b6ab5d71a4a978bdfac:9dfa22aa4d6a3d820101f59013de0236",
+        "140edf90fa0b5c99864f2442df4df535:991b51ed2e690c96163a31ae4a6f6452",
+        "e392571e46bd5461854986ae9e58083d:1167c024aa8bbad2c1beaf218cfeec11"
+      ],
+      cookie: ""
+    }
   };
 
   const video = document.getElementById("video");
@@ -73,6 +77,20 @@
         statusTimer = null;
       }, dur || 4000);
     }
+  }
+
+  async function fetchChannel(id) {
+    const res = await fetch(CONFIG.apiUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    let channels = Array.isArray(data)
+      ? data
+      : (data.channels || data.data || data.items || []);
+    const channel = channels.find(function (c) {
+      return c && (c.id === id || c.name === id);
+    });
+    if (!channel) throw new Error("Channel " + id + " not found");
+    return channel;
   }
 
   function injectFitButton(containerEl, videoEl) {
@@ -209,7 +227,23 @@
       if (++injectCount < 5) setTimeout(tryInject, 150);
     })();
 
-    const clearKeys = buildClearKeys(CONFIG.drmKeys);
+    setStatus("Fetching channel…", "warn", 0);
+    let channel;
+    try {
+      channel = await fetchChannel(CONFIG.channelId);
+    } catch (e) {
+      console.warn("API fetch failed, using fallback:", e);
+      setStatus("API failed — using fallback", "warn", 3000);
+      channel = {
+        stream_url: CONFIG.fallback.streamUrl,
+        key: CONFIG.fallback.drmKeys,
+        cookie: CONFIG.fallback.cookie
+      };
+    }
+
+    const streamUrl = channel.stream_url || CONFIG.fallback.streamUrl;
+    const drmKeys = channel.key || channel.drmKeys || CONFIG.fallback.drmKeys;
+    const clearKeys = buildClearKeys(drmKeys);
 
     player.configure({
       drm: { clearKeys: clearKeys },
@@ -222,23 +256,22 @@
       }
     });
 
-    let cookieValue = "";
-    try {
-      const response = await fetch(CONFIG.cookieUrl, { cache: "no-store" });
-      const data = await response.json();
-      cookieValue = data.cookie || "";
-    } catch (e) {}
+    let cookieValue = channel.cookie || "";
+    let urlCookie = cookieValue.startsWith("__hdnea__=")
+      ? cookieValue.slice(10)
+      : cookieValue;
 
     if (cookieValue) {
       player.getNetworkingEngine().registerRequestFilter(function (type, request) {
         request.headers["Referer"] = "https://www.jiotv.com/";
         request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-        request.headers["Cookie"] = cookieValue;
+        request.headers["Cookie"] = cookieValue.startsWith("__hdnea__=")
+          ? cookieValue
+          : "__hdnea__=" + cookieValue;
 
-        let urlCookie = cookieValue.startsWith("__hdnea__=") ? cookieValue.slice(10) : cookieValue;
         if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
              type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
-            !request.uris[0].includes("__hdnea__")) {
+            urlCookie && !request.uris[0].includes("__hdnea__")) {
           const sep = request.uris[0].includes("?") ? "&" : "?";
           request.uris[0] += sep + "__hdnea__=" + urlCookie;
         }
@@ -247,10 +280,11 @@
 
     try {
       setStatus("Loading…", "warn", 0);
-      await player.load(CONFIG.streamUrl);
+      await player.load(streamUrl);
       setStatus("Live", "live", 4000);
       video.play().catch(function () {});
     } catch (e) {
+      console.error(e);
       setStatus("Error loading stream", "err", 0);
     }
 
