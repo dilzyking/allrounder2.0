@@ -8,19 +8,28 @@
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
-    {
-      "id": "sony-liv",
-      "name": "Star Sports Hindi",
-      "type": "iframe",
-      "iframeSrc": "https://allrounder3-0.pages.dev/sony-2",
-      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
-      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
-    },
+    
     {
       "id": "ramayana",
       "name": "Star Sports Hindi",
       "type": "iframe",
       "iframeSrc": "https://allrounder3-0.pages.dev/mirzapur",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "ilt-1",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder2-0.pages.dev/cricket/unite1",
+      "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
+      "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
+    },
+    {
+      "id": "ilt-2",
+      "name": "Star Sports Hindi",
+      "type": "iframe",
+      "iframeSrc": "https://allrounder2-0.pages.dev/cricket/zest",
       "hit": "https://hit-counter-theta.vercel.app/api/hit?key=hindi",
       "get": "https://hit-counter-theta.vercel.app/api/get?key=hindi"
     },
