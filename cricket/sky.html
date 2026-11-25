@@ -1,190 +1,241 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#000000">
-<meta name="referrer" content="no-referrer">
 <title>Live Player</title>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
 
 <style>
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html, body {
   width: 100%;
   height: 100%;
   height: 100dvh;
-  background: #000;
   overflow: hidden;
+  background: #000;
 }
 
-#videoContainer {
+.player-container {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
   background: #000;
 }
 
-#video {
+video {
   width: 100%;
   height: 100%;
   object-fit: contain;
   background: #000;
 }
 
-.shaka-video-container {
+.plyr {
   width: 100%;
   height: 100%;
+  --plyr-color-main: #e50914;
+  --plyr-video-background: #000;
+  --plyr-menu-background: #151515;
+  --plyr-menu-color: #fff;
+  --plyr-control-radius: 5px;
 }
 
-.shaka-spinner-container,
-.shaka-spinner,
-.shaka-spinner-svg {
-  display: none !important;
+.plyr--video .plyr__controls {
+  padding: 15px 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,.9));
 }
 
-#error {
+.plyr__video-wrapper {
+  height: 100%;
+  background: #000;
+}
+
+.plyr__video-wrapper video {
+  object-fit: contain;
+}
+
+.status {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  z-index: 5;
+  top: 15px;
+  left: 15px;
   color: #fff;
-  font: 14px Arial, sans-serif;
-  text-align: center;
-  padding: 20px;
-  display: none;
-  z-index: 10;
+  background: rgba(20,20,20,.8);
+  border: 1px solid #333;
+  padding: 7px 11px;
+  border-radius: 5px;
+  font: 12px Arial, sans-serif;
   pointer-events: none;
+}
+
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #e50914;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+@media (orientation: portrait) {
+  .plyr__video-wrapper video {
+    object-fit: contain;
+  }
 }
 </style>
 </head>
 
 <body>
-
-<div id="videoContainer">
-  <video
-    id="video"
-    autoplay
-    playsinline
-    preload="auto">
-  </video>
-  <div id="error"></div>
+<div class="player-container">
+  <div class="status" id="status">Connecting</div>
+  <video id="video" controls playsinline crossorigin="anonymous"
+         preload="auto"></video>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
 <script>
-const STREAM_URL = "https://stream-sprout-proxy.lovable.app/api/proxy?u=https://in-mc-vod.fancode.com/mumbai/4251054_english_hls_b961d4d41363338_1ta-di_h264/index.m3u8";
+const STREAM =
+  "https://jute-chappal.lovable.app/api/public/hls?url=https://in-mc-vod.fancode.com/mumbai/4251054_english_hls_b961d4d41363338_1ta-di_h264/index.m3u8";
 
-async function initPlayer() {
-  const video = document.getElementById("video");
-  const container = document.getElementById("videoContainer");
-  const errorBox = document.getElementById("error");
+const video = document.getElementById("video");
+const status = document.getElementById("status");
 
-  function showError(message) {
-    errorBox.textContent = message;
-    errorBox.style.display = "block";
-  }
+let hls = null;
+let player = null;
 
-  shaka.polyfill.installAll();
+function setStatus(message) {
+  status.textContent = message;
+}
 
-  if (!shaka.Player.isBrowserSupported()) {
-    showError("Browser not supported");
+function initializePlayer(qualityOptions = [0]) {
+  if (player) player.destroy();
+
+  player = new Plyr(video, {
+    autoplay: false,
+    fullscreen: {
+      enabled: true,
+      fallback: true,
+      iosNative: true
+    },
+    muted: false,
+    clickToPlay: true,
+    hideControls: true,
+    resetOnEnd: false,
+    keyboard: { focused: true, global: true },
+    tooltips: { controls: true, seek: true },
+    settings: ["quality", "speed"],
+    speed: {
+      selected: 1,
+      options: [0.5, 0.75, 1, 1.25, 1.5, 2]
+    },
+    quality: {
+      default: 0,
+      options: qualityOptions,
+      forced: true,
+      onChange: changeQuality
+    },
+    i18n: {
+      qualityLabel: { 0: "Auto" }
+    }
+  });
+
+  player.on("playing", () => setStatus("Playing"));
+  player.on("waiting", () => setStatus("Buffering"));
+  player.on("error", () => setStatus("Playback error"));
+  player.on("canplay", () => setStatus("Ready"));
+}
+
+function changeQuality(height) {
+  if (!hls) return;
+
+  if (height === 0) {
+    hls.currentLevel = -1;
     return;
   }
 
-  const player = new shaka.Player();
-  await player.attach(video);
-
-  const ui = new shaka.ui.Overlay(
-    player,
-    container,
-    video
+  const index = hls.levels.findIndex(
+    level => level.height === height
   );
 
-  ui.configure({
-    addBigPlayButton: true,
-    controlPanelElements: [
-      "play_pause",
-      "mute",
-      "volume",
-      "time_and_duration",
-      "spacer",
-      "language",
-      "captions",
-      "quality",
-      "picture_in_picture",
-      "fullscreen"
-    ],
-    seekBarColors: {
-      base: "#828282",
-      buffered: "#ffc336",
-      played: "#ff751b"
-    }
-  });
-
-  player.configure({
-    streaming: {
-      bufferingGoal: 15,
-      rebufferingGoal: 2,
-      bufferBehind: 15,
-      retryParameters: {
-        timeout: 10000,
-        maxAttempts: 5,
-        baseDelay: 500,
-        backoffFactor: 1.5
-      }
-    }
-  });
-
-  player.addEventListener("error", event => {
-    console.error("Shaka Error:", event.detail);
-    showError("Stream playback error");
-  });
-
-  try {
-    await player.load(
-      STREAM_URL,
-      null,
-      "application/x-mpegurl"
-    );
-
-    try {
-      await video.play();
-    } catch (e) {
-      console.log("Autoplay blocked. Tap play.");
-    }
-  } catch (e) {
-    console.error(e);
-    showError("Unable to load stream");
+  if (index !== -1) {
+    hls.currentLevel = index;
   }
 }
 
-document.addEventListener(
-  "DOMContentLoaded",
-  initPlayer
-);
-</script>
+function startPlayer() {
+  if (Hls.isSupported()) {
+    hls = new Hls({
+      enableWorker: true,
+      capLevelToPlayerSize: false,
+      startLevel: -1,
+      maxBufferLength: 30
+    });
 
-<!-- Original advertisement script retained -->
-<script>
-(function(s) {
-  s.dataset.zone = '11514537';
-  s.src = 'https://llvpn.com/tag.min.js';
-})(
-  [document.documentElement, document.body]
-    .filter(Boolean)
-    .pop()
-    .appendChild(document.createElement('script'))
-);
-</script>
+    hls.loadSource(STREAM);
+    hls.attachMedia(video);
 
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      const heights = [
+        ...new Set(
+          hls.levels
+            .map(level => level.height)
+            .filter(height => height > 0)
+        )
+      ].sort((a, b) => a - b);
+
+      initializePlayer([0, ...heights]);
+      setStatus("Ready");
+    });
+
+    hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+      if (hls.autoLevelEnabled && hls.levels[data.level]) {
+        setStatus("Auto · " + hls.levels[data.level].height + "p");
+      }
+    });
+
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      if (data.fatal) {
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          setStatus("Network error");
+          hls.startLoad();
+        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          setStatus("Recovering playback");
+          hls.recoverMediaError();
+        } else {
+          setStatus("Stream unavailable");
+          hls.destroy();
+        }
+      }
+    });
+
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = STREAM;
+    initializePlayer([0]);
+    setStatus("Ready");
+  } else {
+    setStatus("HLS not supported");
+  }
+}
+
+startPlayer();
+
+window.addEventListener("beforeunload", () => {
+  if (hls) hls.destroy();
+});
+</script>
 </body>
+  <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+
 </html>
