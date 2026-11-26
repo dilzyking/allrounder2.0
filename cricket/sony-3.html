@@ -1,194 +1,497 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FIFA WORLD CUP 2026</title>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FMP9REY96D"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-FMP9REY96D');
-  </script>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="author" content="sayan">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.3.5/dist/controls.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html, body {
-      background: #000;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-
-    .shaka-video-container {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      object-fit: contain;
-    }
-
-    .shaka-spinner-container,
-    .shaka-spinner,
-    .shaka-spinner-svg {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;height:100%;background:#0a0a0a;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+    #player-container{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
+    video{width:100%;height:100%;object-fit:contain;background:#000}
+    video.mode-fill{object-fit:fill}
+    video.mode-cover{object-fit:cover}
+    #status{position:fixed;top:max(16px,env(safe-area-inset-top));right:16px;z-index:9997;display:flex;align-items:center;gap:7px;padding:6px 15px 6px 11px;background:rgba(10,10,10,.88);border:1px solid rgba(255,255,255,.07);font-size:11.5px;font-weight:500;letter-spacing:.2px;border-radius:24px;pointer-events:none;opacity:0;transform:translateY(-6px);transition:opacity .25s ease,transform .25s ease;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);white-space:nowrap;box-shadow:0 2px 14px rgba(0,0,0,.45);color:#c0c0c0}
+    #status.show{opacity:1;transform:translateY(0)}
+    .st-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;background:#60a5fa}
+    #status.live .st-dot{background:#22d3a0;animation:dot-pulse 2s ease-in-out infinite}
+    #status.warn .st-dot{background:#fb923c;animation:dot-pulse 1s ease-in-out infinite}
+    #status.err .st-dot{background:#f87171}
+    @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.55)}}
+    .sp-btn{background:transparent!important;border:none!important;cursor:pointer!important;padding:0 8px!important;opacity:.75;display:flex;align-items:center;justify-content:center;height:100%;min-width:36px;transition:opacity .15s,color .15s;color:#fff!important;-webkit-tap-highlight-color:transparent}
+    .sp-btn:hover{opacity:1}
+    .sp-btn:active{opacity:1;transform:scale(.9)}
+    .sp-btn:focus-visible{outline:2px solid #38bdf8;outline-offset:2px;border-radius:6px}
+    .sp-fit-btn{padding:0 7px!important;min-width:auto!important}
+    .fit-pill{font-size:10px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:4px;line-height:1;border:1.5px solid rgba(255,255,255,.28);color:rgba(255,255,255,.8);pointer-events:none;white-space:nowrap;transition:border-color .2s,color .2s}
+    .sp-fit-btn:hover .fit-pill{border-color:rgba(255,255,255,.55);color:#fff}
+    .sp-fit-btn.mode-fill .fit-pill{border-color:#38bdf8;color:#38bdf8}
+    .sp-fit-btn.mode-cover .fit-pill{border-color:#a78bfa;color:#a78bfa}
+    .shaka-controls-container button{color:#fff!important}
+    .shaka-video-container{background-color:#000!important}
+    @media(max-width:380px){.fit-pill{font-size:9px;padding:2px 5px}.sp-btn{padding:0 5px!important;min-width:auto!important}}
   </style>
 </head>
-
 <body>
 
-  <div class="shaka-video-container" data-shaka-player>
-    <video autoplay playsinline preload="metadata"
-      poster="https://w0.peakpx.com/wallpaper/183/933/HD-wallpaper-fifa-world-cup-26-u-sports-soccer-mexico-canada-football-fifa-world-cup-world-cup-2026-we-are-26-sport-event-international-competition-global-event-tournament.jpg">
-    </video>
-  </div>
+<div id="player-container">
+  <video id="video" muted playsinline webkit-playsinline preload="none"
+         x5-video-player-type="h5" x5-video-player-fullscreen="true"></video>
+</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+<div id="status"><span class="st-dot"></span><span id="statusText">Live</span></div>
 
-      shaka.polyfill.installAll();
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@5.3.5/dist/shaka-player.ui.min.js"></script>
 
-      if (!shaka.Player.isBrowserSupported()) {
-        console.error('Browser not supported');
+<script>
+(function () {
+  "use strict";
+
+  const CONFIG = {
+    apiUrl: "https://allrounder3-0.pages.dev/api/sports.json",
+    channelId: "STEN1",
+    referer: "https://www.jiotv.com/",
+    userAgent: "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6",
+    fallback: {
+      streamUrl: "https://jiotvpllive.cdn.jio.com/bpk-tv/SonySportsTen1HDSTB_BTS/WDVLive/index.mpd",
+      drmKeys: [        "cd96ce073bb51428a454251943143b8:9cf359bd8e323b05248caacc2b4da6c9",
+        "4ad1bbe0ba195aceb58a6e5f1ee3cc6f:4804a8a9a97bb14b0488e08942ab85e3",
+        "b5185c603f4c5cb794d9dae1b55bce38:c019b2cd8c7944cc90b66cfce3b7132c",
+        "36ce7134ee6753beb5c0126e5c8cce02:c28f9b7c3c5d8b8416820173637770a4",
+        "8307b4c86cbc54e3a4a635b662e5a44a:41a0b587ea7e3bff24156ef9b27c87dc"
+      ],
+      cookie: "__hdnea__=st=1795254669~exp=1795276269~acl=/bpk-tv/SonySportsTen3HinHDSTB_BTS/WDVLive/*~hmac=0353ac78a2d39b59627739679eca8f6976592f4d92e152c4f3d39651cfd99435"
+    },
+    retry: { maxAttempts: 5, baseDelayMs: 1500, maxDelayMs: 8000 }
+  };
+
+  const video = document.getElementById("video");
+  const container = document.getElementById("player-container");
+  const statusEl = document.getElementById("status");
+  const statusText = document.getElementById("statusText");
+
+  let statusTimer = null;
+
+  function setStatus(msg, type, dur) {
+    if (!statusEl) return;
+    statusText.textContent = msg || "Live";
+    statusEl.className = "show " + (type || "live");
+    if (statusTimer) { clearTimeout(statusTimer); statusTimer = null; }
+    if (dur !== 0) {
+      statusTimer = setTimeout(function () {
+        statusEl.className = (type || "live");
+        statusTimer = null;
+      }, dur || 4000);
+    }
+  }
+
+  async function fetchChannel(id) {
+    const res = await fetch(CONFIG.apiUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const channels = Array.isArray(data)
+      ? data
+      : (data.channels || data.data || data.items || []);
+    const channel = channels.find(function (c) {
+      return c && (c.id === id || c.name === id);
+    });
+    if (!channel) throw new Error("Channel " + id + " not found");
+    return channel;
+  }
+
+  async function pickChannel() {
+    try {
+      return await fetchChannel(CONFIG.channelId);
+    } catch (e) {
+      console.warn("API fetch failed, using fallback:", e);
+      setStatus("API failed — using fallback", "warn", 3000);
+      return null;
+    }
+  }
+  function extractClearKeys(source) {
+    const out = {};
+    if (!source) return out;
+
+    const list = Array.isArray(source.key)
+      ? source.key
+      : (Array.isArray(source.drmKeys) ? source.drmKeys : []);
+    list.forEach(function (pair) {
+      if (typeof pair !== "string") return;
+      const idx = pair.indexOf(":");
+      if (idx <= 0) return; // skip malformed or empty-KID entries
+      const kid = pair.slice(0, idx).trim().toLowerCase();
+      const key = pair.slice(idx + 1).trim().toLowerCase();
+      if (kid && key) out[kid] = key;
+    });
+
+    let parsedSingle = false;
+    if (typeof source.key === "string") {
+      const idx = source.key.indexOf(":");
+      if (idx > 0) {
+        const kid = source.key.slice(0, idx).trim().toLowerCase();
+        const key = source.key.slice(idx + 1).trim().toLowerCase();
+        if (kid && key) { out[kid] = key; parsedSingle = true; }
+      }
+    }
+
+    if (!parsedSingle &&
+        typeof source.key_id === "string" &&
+        typeof source.key === "string") {
+      const kid = source.key_id.trim().toLowerCase();
+      const key = source.key.trim().toLowerCase();
+      if (kid && key) out[kid] = key;
+    }
+
+    return out;
+  }
+
+  let cookieHeader = ""; // full value for the Cookie header
+  let urlToken = ""; 
+
+  function applyChannelCookie(rawCookie) {
+    if (typeof rawCookie !== "string" || !rawCookie) {
+      cookieHeader = "";
+      urlToken = "";
+      return;
+    }
+    if (rawCookie.indexOf("__hdnea__=") === 0) {
+      cookieHeader = rawCookie;
+      urlToken = rawCookie.slice(10);
+    } else {
+      cookieHeader = "__hdnea__=" + rawCookie;
+      urlToken = rawCookie;
+    }
+  }
+
+  function registerRequestFilter(player) {
+    const T = shaka.net.NetworkingEngine.RequestType;
+    player.getNetworkingEngine().registerRequestFilter(function (type, request) {
+      if (cookieHeader) {
+        request.headers["Referer"] = CONFIG.referer;
+        request.headers["User-Agent"] = CONFIG.userAgent;
+        request.headers["Cookie"] = cookieHeader;
+      }
+      if ((type === T.MANIFEST || type === T.SEGMENT) && urlToken) {
+        request.uris = request.uris.map(function (u) {
+          if (typeof u !== "string" || u.indexOf("__hdnea__") !== -1) return u;
+          return u + (u.indexOf("?") !== -1 ? "&" : "?") + "__hdnea__=" + urlToken;
+        });
+      }
+    });
+  }
+  function injectFitButton(containerEl, videoEl) {
+    const panel = containerEl.querySelector(".shaka-controls-button-panel");
+    if (!panel) return false;
+
+    const anchor = panel.querySelector(".shaka-fullscreen-button");
+    const FITS = ["contain", "fill", "cover"];
+    const FIT_LABELS = { contain: "Fit", fill: "Fill", cover: "Zoom" };
+    let fitIdx = 0;
+
+    const fitBtn = document.createElement("button");
+    fitBtn.className = "sp-btn sp-fit-btn";
+    fitBtn.title = "Video Fit: " + FIT_LABELS.contain;
+    fitBtn.setAttribute("aria-label", "Cycle Video Fit Mode");
+    fitBtn.innerHTML = '<span class="fit-pill">—</span>';
+
+    if (anchor) panel.insertBefore(fitBtn, anchor);
+    else panel.appendChild(fitBtn);
+
+    let currentRatio = "—";
+    function applyFit(i) {
+      fitIdx = i;
+      const m = FITS[i];
+      videoEl.classList.remove("mode-fill", "mode-cover");
+      if (m === "fill") videoEl.classList.add("mode-fill");
+      if (m === "cover") videoEl.classList.add("mode-cover");
+      fitBtn.classList.remove("mode-fill", "mode-cover");
+      if (m !== "contain") fitBtn.classList.add("mode-" + m);
+      fitBtn.title = "Video Fit: " + FIT_LABELS[m];
+      const pill = fitBtn.querySelector(".fit-pill");
+      if (pill) pill.textContent = (m === "contain") ? currentRatio : FIT_LABELS[m];
+    }
+
+    fitBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      applyFit((fitIdx + 1) % FITS.length);
+    });
+
+ 
+    ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        if (!(document.fullscreenElement || document.webkitFullscreenElement)) applyFit(0);
+      });
+    });
+
+    function ratioLabel(w, h) {
+      if (!w || !h) return "—";
+      function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+      const g = gcd(w, h) || 1, rw = w / g, rh = h / g;
+      const named = { "16:9": 16 / 9, "4:3": 4 / 3, "21:9": 21 / 9, "1:1": 1, "9:16": 9 / 16, "3:2": 3 / 2, "5:4": 5 / 4, "2:1": 2 };
+      const real = w / h;
+      let best = null, bestD = 0.02;
+      Object.keys(named).forEach(function (k) {
+        const d = Math.abs(named[k] - real);
+        if (d < bestD) { bestD = d; best = k; }
+      });
+      if (best) return best;
+      if (rw <= 40 && rh <= 40) return rw + ":" + rh;
+      return real.toFixed(2) + ":1";
+    }
+    let ratioTries = 0;
+    function updateRatio() {
+      const pill = fitBtn.querySelector(".fit-pill");
+      if (!pill) return;
+      if (videoEl.videoWidth > 0) {
+        currentRatio = ratioLabel(videoEl.videoWidth, videoEl.videoHeight);
+        if (FITS[fitIdx] === "contain") pill.textContent = currentRatio;
+        ratioTries = 0;
+      } else if (ratioTries < 15) {
+        ratioTries++;
+        setTimeout(updateRatio, 700);
+      }
+    }
+
+    videoEl.addEventListener("loadedmetadata", function () { ratioTries = 0; updateRatio(); });
+    videoEl.addEventListener("resize", updateRatio);
+    videoEl.addEventListener("timeupdate", function onFirstFrame() {
+      videoEl.removeEventListener("timeupdate", onFirstFrame);
+      updateRatio();
+    });
+    updateRatio();
+
+    return true;
+  }
+  const INTERACTION_EVENTS = ["pointerdown", "click", "keydown"];
+
+  function unmuteOnFirstInteraction() {
+    video.muted = false;
+    INTERACTION_EVENTS.forEach(function (name) {
+      container.removeEventListener(name, unmuteOnFirstInteraction, true);
+    });
+  }
+
+  function installUnmuteOnFirstInteraction() {
+    INTERACTION_EVENTS.forEach(function (name) {
+      container.addEventListener(name, unmuteOnFirstInteraction, { capture: true });
+    });
+  }
+  const RECOVERABLE_CODES = [1001, 1002, 1003, 4012, 6006, 6007, 7000, 7001, 7002];
+
+  let loadAttempts = 0; 
+  let loading = false;  
+  let lastRecoveryAt = 0;  
+  let resumeWanted = false;
+
+  function unloadQuietly(player) {
+    try {
+      return player.unload().catch(function () {});
+    } catch (_) {
+      return Promise.resolve();
+    }
+  }
+
+  function retryOrFail(player, label) {
+    loadAttempts++;
+    if (loadAttempts >= CONFIG.retry.maxAttempts) {
+      setStatus("Stream unavailable — retry limit reached", "err", 0);
+      return;
+    }
+    const delay = Math.min(
+      CONFIG.retry.baseDelayMs * Math.pow(2, loadAttempts - 1),
+      CONFIG.retry.maxDelayMs
+    );
+    setStatus(label + " — attempt " + (loadAttempts + 1) + " of " + CONFIG.retry.maxAttempts, "warn", 0);
+    setTimeout(function () {
+      unloadQuietly(player).then(function () { loadStream(player); });
+    }, delay);
+  }
+
+  async function loadStream(player) {
+    if (loading) return;
+    loading = true;
+    try {
+      setStatus("Fetching channel…", "warn", 0);
+      const channel = await pickChannel();
+      const source = channel || {
+        stream_url: CONFIG.fallback.streamUrl,
+        key: CONFIG.fallback.drmKeys,
+        cookie: CONFIG.fallback.cookie
+      };
+
+      const streamUrl = source.stream_url || CONFIG.fallback.streamUrl;
+      const clearKeys = extractClearKeys(source);
+      applyChannelCookie(source.cookie || "");
+
+      if (!Object.keys(clearKeys).length) {
+      
+        retryOrFail(player, "Waiting for DRM keys");
         return;
       }
 
-      const video = document.querySelector('video');
-      const player = new shaka.Player();
-
-      await player.attach(video);
-
-      const container = document.querySelector('.shaka-video-container');
-      const ui = new shaka.ui.Overlay(player, container, video);
-
-      ui.configure({
-        controlPanelElements: [
-          'play_pause', 'time_and_duration', 'mute', 'volume',
-          'spacer', 'language', 'captions', 'picture_in_picture',
-          'quality', 'fullscreen'
-        ],
-
-        volumeBarColors: {
-          base: 'rgba(0, 136, 255, 0.3)',
-          level: 'rgb(0, 136, 255)'
-        },
-
-        seekBarColors: {
-          base: 'rgba(90, 0, 0, 0.3)',
-          buffered: 'rgba(120, 0, 0, 0.6)',
-          played: 'rgb(170, 0, 0)'
-        }
-      });
-
-      let drmConfig = {
-        clearKeys: {
-          "115086768751d95aac011169ff3547bd":
-            "3e3c4e34b782a6ffe98df710f8dc0a00"
-        }
-      };
-
-      let streamUrl = "https://abn7ylpaaaaaaaame77ehqq2geew7.ta.bia-cf.live.pv-cdn.net/bom-nitro/live/clients/dash/enc/cykl8o2zcf/out/v1/6623d98f16214d3d8fb5bee1245770c1/cenc.mpd";
-
       player.configure({
-        drm: drmConfig,
-
-        // Prefer Hindi audio
-        preferredAudioLanguage: 'hi',
-        preferredTextLanguage: 'hi',
-
+        drm: { clearKeys: clearKeys },
+        manifest: { defaultPresentationDelay: 5 },
         streaming: {
           lowLatencyMode: true,
-          bufferingGoal: 15,
+          bufferingGoal: 10,
           rebufferingGoal: 2,
-          bufferBehind: 15,
-
-          retryParameters: {
-            timeout: 10000,
-            maxAttempts: 5,
-            baseDelay: 300,
-            backoffFactor: 1.2
-          },
-
-          segmentRequestTimeout: 8000,
-          segmentPrefetchLimit: 2,
-          useNativeHlsOnSafari: true
-        },
-
-        manifest: {
-          retryParameters: {
-            timeout: 8000,
-            maxAttempts: 3
-          }
+          safeSeekOffset: 5
         }
       });
 
-      player.addEventListener('error', (event) => {
-        console.error('Shaka Player Error:', event.detail);
-      });
-
+      setStatus("Loading stream…", "warn", 0);
       try {
-
         await player.load(streamUrl);
-
-        // Automatically select Hindi audio
-        const audioTracks = player.getVariantTracks();
-
-        const hindiTrack = audioTracks.find(track => {
-          const lang = (track.language || '').toLowerCase();
-
-          return lang === 'hi' ||
-                 lang === 'hin' ||
-                 lang.startsWith('hi-');
-        });
-
-        if (hindiTrack) {
-          player.selectVariantTrack(hindiTrack, true);
-          console.log('Hindi audio selected successfully');
+        loadAttempts = 0;
+        if (resumeWanted) {
+         
+          resumeWanted = false;
+          video.play().catch(function () {
+            setStatus("Tap Play To Resume", "ok", 5000);
+          });
         } else {
-          console.warn('Hindi audio track not available');
-          console.log('Available audio tracks:', audioTracks);
+       
+          setStatus("Ready - Tap Play Button To Start", "ok", 5000);
         }
-
-        console.log('Stream loaded successfully');
-
-      } catch (error) {
-        console.error('Load error:', error);
+      } catch (e) {
+        console.error("Stream load failed:", e);
+        retryOrFail(player, "Reconnecting");
       }
+    } finally {
+      loading = false;
+    }
+  }
 
+  function recover(player) {
+    if (loading) return;
+    const now = Date.now();
+    if (now - lastRecoveryAt < 3000) return; 
+    lastRecoveryAt = now;
+    if (!video.paused && !video.ended) resumeWanted = true;
+    unloadQuietly(player).then(function () {
+      setStatus("Reconnecting…", "warn", 0);
+      loadStream(player);
     });
-  </script>
+  }
 
-  <script>
-    (function(s) {
-      s.dataset.zone = '11514537';
-      s.src = 'https://llvpn.com/tag.min.js';
-    })(
-      [document.documentElement, document.body]
-        .filter(Boolean)
-        .pop()
-        .appendChild(document.createElement('script'))
-    );
-  </script>
 
+  function watchPlayerErrors(player) {
+    player.addEventListener("error", function (ev) {
+      const err = (ev && ev.detail) || {};
+      const code = err.code || 0;
+      if (RECOVERABLE_CODES.indexOf(code) !== -1) {
+        recover(player);
+      } else {
+        setStatus("Stream error " + (code || "?"), "err", 6000);
+        console.error("Player error:", err);
+      }
+    });
+  }
+
+  function watchVideoState() {
+    let buffering = false;
+
+  
+    video.addEventListener("waiting", function () {
+      if (video.paused || video.ended) return;
+      buffering = true;
+      setStatus("Buffering…", "warn", 0);
+    });
+
+    video.addEventListener("playing", function () {
+      if (buffering) {
+        buffering = false;
+        setStatus("Live", "live", 2500);
+      }
+    });
+
+    video.addEventListener("pause", function () {
+      buffering = false;
+      setStatus("Paused", "ok", 1500);
+    });
+  }
+
+
+  let wasPlayingBeforeHide = false;
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      wasPlayingBeforeHide = !video.paused && !video.ended;
+      return;
+    }
+    setTimeout(function () {
+      if (wasPlayingBeforeHide && video.paused && !video.ended) {
+        video.play().catch(function () {});
+      }
+      wasPlayingBeforeHide = false;
+    }, 400);
+  });
+  async function initPlayer() {
+    shaka.polyfill.installAll();
+    if (!shaka.Player.isBrowserSupported()) {
+      setStatus("Browser not supported", "err", 0);
+      return;
+    }
+
+    const player = new shaka.Player();
+    await player.attach(video);
+
+ 
+    const ui = new shaka.ui.Overlay(player, container, video);
+    ui.configure({
+      addBigPlayButton: true,
+      controlPanelElements: [
+        "play_pause",
+        "mute",
+        "time_and_duration",
+        "spacer",
+        "quality",
+        "language",
+        "picture_in_picture",
+        "fullscreen"
+      ],
+      seekBarColors: {
+        base: "#828282",
+        buffered: "#ffc336",
+        played: "#1fc7ff"
+      }
+    });
+    let injectCount = 0;
+    (function tryInject() {
+      if (injectFitButton(container, video)) return;
+      if (++injectCount < 5) setTimeout(tryInject, 150);
+    })();
+
+    video.muted = true;
+    installUnmuteOnFirstInteraction();
+
+    registerRequestFilter(player);
+    watchVideoState();
+    watchPlayerErrors(player);
+
+
+    await loadStream(player);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof shaka === "undefined") {
+
+      statusText.textContent = "Player failed to load";
+      statusEl.className = "show err";
+      return;
+    }
+    initPlayer().catch(function (e) {
+      console.error("Player init failed:", e);
+      setStatus("Player error", "err", 6000);
+    });
+  });
+})();
+</script>
 </body>
-       <script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
+<script>(function(s){s.dataset.zone='11514537',s.src='https://llvpn.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </html>
